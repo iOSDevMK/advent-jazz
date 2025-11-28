@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jazz Riddel Advent Calendar</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="calendar">
+      <h1>Jazz Riddles Advent Calendar</h1>
+      <p class="subtitle">Open a door, listen to the track, guess the singer — then reveal the voice.</p>
+      <div id="grid" class="grid"></div>
+    </main>
+
+    <div id="modal" class="modal hidden" aria-hidden="true">
+      <div class="modal-backdrop" id="backdrop"></div>
+      <div class="modal-content" id="modalContent">
+        <button id="closeBtn" class="close">✕</button>
+        <p id="riddleText" class="riddle-text">Listen closely before you reveal who’s behind today’s door.</p>
+        <div id="zoomFrame" class="zoom-frame">
+          <img id="dayImg" class="day-image" src="assets/images/day-1-back.svg" alt="Day image">
+        </div>
+        <audio id="audio" preload="auto"></audio>
+        <div class="actions">
+          <button id="replayBtn" class="btn replay hidden">Replay Audio</button>
+          <button id="revealBtn" class="btn hidden">Reveal Singer</button>
+        </div>
+        <img id="singerReveal" class="singer-reveal hidden" src="assets/images/singer-front.png" alt="Singer front">
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
