@@ -180,7 +180,25 @@ function openModal(day){
   // After animation completes, remove clone and show actual images
   clone.addEventListener('transitionend', () => {
     clone.remove();
+    // Ensure the image starts hidden, then fades in
+    const img = document.getElementById('dayImg');
+    if(img){ img.style.opacity = '0'; }
+    // trigger polished enter animation on the zoom frame image
+    const ENTER_MODE = 'vertical'; // 'horizontal' or 'vertical'
+    zoomFrame.classList.add('entering');
+    zoomFrame.classList.toggle('horizontal', ENTER_MODE === 'horizontal');
+    zoomFrame.classList.toggle('vertical', ENTER_MODE === 'vertical');
     zoomFrame.querySelectorAll('img').forEach(i => i.style.opacity = '1');
+    // remove the class after the animation ends
+    if(img){
+      img.addEventListener('animationend', () => {
+        zoomFrame.classList.remove('entering');
+        zoomFrame.classList.remove('horizontal');
+        zoomFrame.classList.remove('vertical');
+        // leave the image visible after animation completes
+        img.style.opacity = '1';
+      }, { once: true });
+    }
   }, { once: true });
 
   // set assets for day (use placeholder pattern)
