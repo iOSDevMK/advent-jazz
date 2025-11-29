@@ -271,11 +271,11 @@ function doReveal(day){
     }catch(e){ currentFrontSrc = 'assets/images/singer-front.png'; }
     finally{
       // spin animation: rotate Y 90deg (hide), swap image, rotate back
-      dayImg.style.transform = 'rotateY(90deg)';
+      dayImg.style.transform = 'rotateY(90deg) scaleX(0.05)';
       setTimeout(() => {
         dayImg.src = currentFrontSrc;
-        dayImg.style.transform = 'rotateY(0deg)';
-      }, 300);
+        dayImg.style.transform = 'rotateY(0deg) scaleX(1)';
+      }, 400);
       
       dayImg.style.opacity = '1';
       revealBtn.classList.add('hidden');
@@ -336,11 +336,11 @@ skipRevealBtn.addEventListener('click', () => {
       });
     }else{
       // spin back to back image
-      dayImg.style.transform = 'rotateY(90deg)';
+      dayImg.style.transform = 'rotateY(-90deg) scaleX(0.05)';
       setTimeout(() => {
         dayImg.src = currentBackSrc || dayImg.src;
-        dayImg.style.transform = 'rotateY(0deg)';
-      }, 300);
+        dayImg.style.transform = 'rotateY(0deg) scaleX(1)';
+      }, 400);
       isRevealed = false;
       skipRevealBtn.classList.remove('revealed');
       skipRevealBtn.setAttribute('aria-label','Reveal singer');
