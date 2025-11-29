@@ -104,13 +104,13 @@ h1{
 .door.locked{opacity:.5;cursor:not-allowed}
 .door-number{
   font-family:'Playfair Display', 'Times New Roman', serif;
-  font-size:30px;
+  font-size:60px;
   font-weight:700;
   color:var(--accent);
   position:absolute;
   left:50%;
-  top:26%;
-  transform:translateX(-50%);
+  top:50%;
+  transform:translate(-50%,-50%);
   padding:8px 12px;
   border-radius:10px;
   background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.2));
@@ -119,7 +119,10 @@ h1{
   z-index:2;
   letter-spacing:0.04em;
 }
-.door.active{filter:brightness(0.8)}
+.door.active{
+  filter:brightness(0.8);
+  transform:translateY(-6px) scale(1.05);
+}
 
 /* remove the heavy inset rim so the user's door image remains unchanged */
 .door::after{content:none}
@@ -194,6 +197,136 @@ h1{
 }
 .zoom-frame img{width:100%;height:100%;object-fit:cover;transition:opacity .4s ease, transform .4s ease}
 .day-image{width:100%;height:100%;object-fit:cover;opacity:1}
+.artist-overlay{
+  position:absolute;
+  inset:auto 0 0 0;
+  padding:14px 16px 18px;
+  background:linear-gradient(180deg, transparent, rgba(0,0,0,0.68), rgba(0,0,0,0.85));
+  color:var(--white);
+  font-family:'Playfair Display', 'Times New Roman', serif;
+  letter-spacing:0.02em;
+  font-size:18px;
+  text-align:center;
+  text-shadow:0 2px 10px rgba(0,0,0,0.45);
+  pointer-events:none;
+}
+.player-controls{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:nowrap;
+  justify-content:center;
+  min-height:48px;
+}
+.player-controls .btn{
+  min-width:0;
+  padding:0;
+  border-radius:50%;
+}
+.player-btn{
+  width:44px;
+  height:44px;
+  min-width:44px;
+  border-radius:50%;
+  padding:0;
+  flex:0 0 44px;
+  display:grid;
+  place-items:center;
+  position:relative;
+  box-shadow:0 6px 16px rgba(0,0,0,0.28);
+}
+.player-btn::before{
+  content:"";
+  display:block;
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+}
+.player-btn.play-state::before{
+  width:0;
+  height:0;
+  border-top:12px solid transparent;
+  border-bottom:12px solid transparent;
+  border-left:18px solid #111;
+  transform:translate(-50%,-50%);
+}
+.player-btn.pause-state::before{
+  width:14px;
+  height:18px;
+  background:linear-gradient(90deg, #111 0 40%, transparent 40% 60%, #111 60% 100%);
+  box-shadow:none;
+  transform:translate(-50%,-50%);
+}
+.skip-btn{
+  background:var(--accent-2);
+  position:relative;
+}
+.skip-btn::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  margin:auto;
+  width:32px;
+  height:32px;
+  transform:translate(0,0);
+  background:url("assets/images/eye.svg") center/80% no-repeat;
+}
+.skip-btn.revealed::before{
+  background:url("assets/images/lightbulb.svg") center 55%/80% no-repeat;
+}
+.skip-btn.ready{
+  box-shadow:0 0 0 3px rgba(212,175,55,0.35), 0 10px 24px rgba(0,0,0,0.35);
+}
+.time-text{
+  color:var(--accent-2);
+  font-weight:700;
+  font-size:13px;
+  letter-spacing:0.01em;
+  font-variant-numeric: tabular-nums;
+  font-family:'Inter', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  white-space:nowrap;
+  min-width:48px;
+  text-align:center;
+  line-height:1;
+}
+.progress-container{
+  flex:1;
+  min-width:140px;
+}
+.progress-track{
+  width:100%;
+  height:10px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.1);
+  overflow:visible;
+  box-shadow:inset 0 1px 4px rgba(0,0,0,0.35);
+  cursor:pointer;
+  position:relative;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg, var(--accent), var(--accent-2));
+  width:0;
+  transition:width .12s linear;
+  position:absolute;
+  left:0;
+  top:0;
+}
+.progress-handle{
+  position:absolute;
+  top:50%;
+  left:0;
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, #fff, var(--accent));
+  box-shadow:0 4px 12px rgba(0,0,0,0.45);
+  transform:translate(-50%,-50%);
+  border:2px solid rgba(0,0,0,0.35);
+  pointer-events:auto;
+}
 .riddle-text{
   text-align:center;
   color:var(--accent-2);
@@ -219,6 +352,13 @@ h1{
   letter-spacing:0.01em;
   min-width:120px;
   transition:transform .2s ease, box-shadow .2s ease;
+}
+.player-controls .player-btn{
+  min-width:42px;
+  width:42px;
+  height:42px;
+  padding:0;
+  border-radius:50%;
 }
 .btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,0.35)}
 .btn:focus-visible{outline:2px solid var(--accent-2);outline-offset:3px}

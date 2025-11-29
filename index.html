@@ -22,10 +22,24 @@
         <p id="riddleText" class="riddle-text">Listen closely before you reveal who’s behind today’s door.</p>
         <div id="zoomFrame" class="zoom-frame">
           <img id="dayImg" class="day-image" src="assets/images/day-1-back.svg" alt="Day image">
+          <div id="artistOverlay" class="artist-overlay hidden">
+            <span id="artistLabel">Artist name</span>
+          </div>
+        </div>
+        <div class="player-controls" aria-label="Audio controls">
+          <button id="playPauseBtn" class="btn player-btn play-state" aria-label="Play"></button>
+          <div class="time-text time-elapsed"><span id="timeElapsed">0:00</span></div>
+          <div class="progress-container" id="progressContainer" aria-label="Playback progress">
+            <div class="progress-track" id="progressTrack">
+              <div class="progress-fill" id="progressFill" style="width:0%"></div>
+              <div class="progress-handle" id="progressHandle"></div>
+            </div>
+          </div>
+          <div class="time-text time-remaining"><span id="timeRemaining">--:--</span></div>
+          <button id="skipRevealBtn" class="btn player-btn skip-btn" aria-label="Reveal singer"></button>
         </div>
         <audio id="audio" preload="auto"></audio>
         <div class="actions">
-          <button id="replayBtn" class="btn replay hidden">Replay Audio</button>
           <button id="revealBtn" class="btn hidden">Reveal Singer</button>
         </div>
         <img id="singerReveal" class="singer-reveal hidden" src="assets/images/singer-front.png" alt="Singer front">
