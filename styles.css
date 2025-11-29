@@ -195,8 +195,8 @@ h1{
   position:relative;
   box-shadow:0 24px 60px rgba(0,0,0,0.65);
 }
-.zoom-frame img{width:100%;height:100%;object-fit:cover;transition:opacity .4s ease, transform .4s ease}
-.day-image{width:100%;height:100%;object-fit:cover;opacity:1}
+.zoom-frame img{width:100%;height:100%;object-fit:cover;transition:opacity .4s ease, transform .6s ease;transform-style:preserve-3d}
+.day-image{width:100%;height:100%;object-fit:cover;opacity:1;backface-visibility:hidden}
 .signature-overlay{
   position:absolute;
   left:50%;

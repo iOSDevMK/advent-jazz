@@ -258,18 +258,25 @@ function doReveal(day){
   return (async ()=>{
     try{
       let r = await fetch(frontJpg, { method: 'HEAD' });
-      if(r.ok){ currentFrontSrc = frontJpg; dayImg.src = frontJpg; }
+      if(r.ok){ currentFrontSrc = frontJpg; }
       else{
         r = await fetch(frontPng, { method: 'HEAD' });
-        if(r.ok){ currentFrontSrc = frontPng; dayImg.src = frontPng; }
+        if(r.ok){ currentFrontSrc = frontPng; }
         else{
           r = await fetch(frontSvg, { method: 'HEAD' });
-          if(r.ok){ currentFrontSrc = frontSvg; dayImg.src = frontSvg; }
-          else{ currentFrontSrc = 'assets/images/singer-front.png'; dayImg.src = currentFrontSrc; }
+          if(r.ok){ currentFrontSrc = frontSvg; }
+          else{ currentFrontSrc = 'assets/images/singer-front.png'; }
         }
       }
-    }catch(e){ currentFrontSrc = 'assets/images/singer-front.png'; dayImg.src = currentFrontSrc; }
+    }catch(e){ currentFrontSrc = 'assets/images/singer-front.png'; }
     finally{
+      // spin animation: rotate Y 90deg (hide), swap image, rotate back
+      dayImg.style.transform = 'rotateY(90deg)';
+      setTimeout(() => {
+        dayImg.src = currentFrontSrc;
+        dayImg.style.transform = 'rotateY(0deg)';
+      }, 300);
+      
       dayImg.style.opacity = '1';
       revealBtn.classList.add('hidden');
       if(isRevealed && currentArtist){
@@ -328,7 +335,12 @@ skipRevealBtn.addEventListener('click', () => {
         updateSignatureVisibility();
       });
     }else{
-      dayImg.src = currentBackSrc || dayImg.src;
+      // spin back to back image
+      dayImg.style.transform = 'rotateY(90deg)';
+      setTimeout(() => {
+        dayImg.src = currentBackSrc || dayImg.src;
+        dayImg.style.transform = 'rotateY(0deg)';
+      }, 300);
       isRevealed = false;
       skipRevealBtn.classList.remove('revealed');
       skipRevealBtn.setAttribute('aria-label','Reveal singer');
