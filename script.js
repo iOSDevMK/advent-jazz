@@ -28,15 +28,24 @@ let isScrubbing = false;
 let currentArtist = '';
 
 function updateSignatureVisibility(){
-  // Show signature when a signature asset exists and the front is revealed
-  const showSignature = currentSignatureSrc && isRevealed;
+  // Show signature when artist name exists and front is revealed
+  const showSignature = currentArtist && isRevealed;
+  const signatureText = document.getElementById('signatureText');
   if(showSignature){
-    signatureOverlay.src = currentSignatureSrc;
+    signatureText.textContent = currentArtist;
     signatureOverlay.classList.remove('hidden');
-    signatureOverlay.classList.add('front-visible');
+    // Delay animation until after flip animation completes
+    setTimeout(() => {
+      signatureOverlay.classList.add('visible');
+      signatureText.classList.remove('animate');
+      // Trigger reflow to restart animation
+      void signatureText.offsetWidth;
+      signatureText.classList.add('animate');
+    }, 800);
     return;
   }
-  signatureOverlay.classList.remove('front-visible');
+  signatureOverlay.classList.remove('visible');
+  signatureText.classList.remove('animate');
   signatureOverlay.classList.add('hidden');
 }
 
@@ -176,21 +185,22 @@ function openModal(day){
 
   // set assets for day (use placeholder pattern)
   audioEl.src = `assets/audio/audio-day-${day}.mp3`;
+  audioEl.volume = 1.0;
   audioEl.load();
   audioEl.currentTime = 0;
   revealBtn.classList.add('hidden');
   singerReveal.classList.add('hidden');
   singerReveal.style.opacity = '0';
   signatureOverlay.classList.add('hidden');
-  signatureOverlay.src = '';
-  currentSignatureSrc = '';
+  const signatureText = document.getElementById('signatureText');
+  if(signatureText) signatureText.textContent = '';
   setPlayButtonState('play');
   progressFill.style.width = '0%';
   progressHandle.style.left = '0%';
   timeElapsed.textContent = '0:00';
   timeRemaining.textContent = '--:--';
   skipRevealBtn.classList.remove('ready');
-  riddleText.textContent = `Day ${day} — tap Play to start the audio.`;
+  riddleText.innerHTML = `<span class="day-number">Day ${day}</span>  —  tap Play to start the audio.`;
   const meta = dayMeta[Number(day)];
   currentArtist = meta && meta.artist ? meta.artist : '';
   if(currentArtist){ artistLabel.textContent = currentArtist; }
@@ -213,33 +223,6 @@ function openModal(day){
     }catch(e){ dayImg.src = backSvg; currentBackSrc = backSvg; }
   })();
   dayImg.alt = `Day ${day}`;
-
-  // load optional signature overlay for the back image (prefers SVG, falls back to PNG)
-  const signatureSvg = `assets/signatures/signature-day-${day}.svg`;
-  const signaturePng = `assets/signatures/signature-day-${day}.png`;
-  (async ()=>{
-    try{
-      let r = await fetch(signatureSvg, { method: 'HEAD' });
-      if(r.ok){
-        signatureOverlay.src = signatureSvg;
-        currentSignatureSrc = signatureSvg;
-        updateSignatureVisibility();
-        return;
-      }
-      r = await fetch(signaturePng, { method: 'HEAD' });
-      if(r.ok){
-        signatureOverlay.src = signaturePng;
-        currentSignatureSrc = signaturePng;
-        updateSignatureVisibility();
-        return;
-      }
-      signatureOverlay.classList.add('hidden');
-      currentSignatureSrc = '';
-    }catch(e){
-      signatureOverlay.classList.add('hidden');
-      currentSignatureSrc = '';
-    }
-  })();
 
   audioEl.oncanplay = () => { updateProgress(); };
 
@@ -294,6 +277,9 @@ function doReveal(day){
 function closeModal(){
   audioEl.pause();
   audioEl.currentTime = 0;
+  // Restore background music volume
+  const bgMusic = document.getElementById('bgMusic');
+  if(bgMusic) bgMusic.volume = 0.08;
   document.querySelectorAll('.door.active').forEach(d => d.classList.remove('active'));
   modal.classList.add('hidden');
   modal.setAttribute('aria-hidden','true');
@@ -314,8 +300,16 @@ playPauseBtn.addEventListener('click', () => {
 });
 audioEl.addEventListener('timeupdate', updateProgress);
 audioEl.addEventListener('loadedmetadata', updateProgress);
-audioEl.addEventListener('play', () => { setPlayButtonState('pause'); });
+audioEl.addEventListener('play', () => { 
+  setPlayButtonState('pause');
+  // Duck background music when day audio plays
+  const bgMusic = document.getElementById('bgMusic');
+  if(bgMusic) bgMusic.volume = 0.02;
+});
 audioEl.addEventListener('pause', () => {
+  // Restore background music volume
+  const bgMusic = document.getElementById('bgMusic');
+  if(bgMusic) bgMusic.volume = 0.08;
   if(audioEl.currentTime >= audioEl.duration && isFinite(audioEl.duration)){
     setPlayButtonState('play');
   }else{
@@ -356,3 +350,20 @@ progressHandle.addEventListener('pointerdown', (e) => {
   e.stopPropagation();
   startScrub(e);
 });
+
+// Background music
+const bgMusic = document.getElementById('bgMusic');
+if(bgMusic){
+  bgMusic.volume = 0.08;
+  // Try to auto-play immediately
+  bgMusic.play().catch(() => {
+    // If blocked by browser, play on any user interaction
+    const playBg = () => {
+      bgMusic.play().catch(()=>{});
+      document.removeEventListener('click', playBg);
+      document.removeEventListener('keydown', playBg);
+    };
+    document.addEventListener('click', playBg);
+    document.addEventListener('keydown', playBg);
+  });
+}

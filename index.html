@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Jazz Riddel Advent Calendar</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600;700&family=Luxurious+Script&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -22,7 +22,9 @@
         <p id="riddleText" class="riddle-text">Listen closely before you reveal who’s behind today’s door.</p>
         <div id="zoomFrame" class="zoom-frame">
           <img id="dayImg" class="day-image" src="assets/images/day-1-back.svg" alt="Day image">
-          <img id="signatureOverlay" class="signature-overlay hidden" alt="Signature artwork">
+          <svg id="signatureOverlay" class="signature-overlay hidden" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
+            <text id="signatureText" x="50%" y="70%" text-anchor="middle" class="signature-text"></text>
+          </svg>
           <div id="artistOverlay" class="artist-overlay hidden">
             <span id="artistLabel">Artist name</span>
           </div>
@@ -46,6 +48,10 @@
         <img id="singerReveal" class="singer-reveal hidden" src="assets/images/singer-front.png" alt="Singer front">
       </div>
     </div>
+
+    <audio id="bgMusic" loop>
+      <source src="assets/music/song-1.mp3" type="audio/mpeg">
+    </audio>
 
     <script src="script.js"></script>
   </body>
