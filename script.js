@@ -307,14 +307,19 @@ audioEl.addEventListener('play', () => {
   if(bgMusic) bgMusic.volume = 0.02;
 });
 audioEl.addEventListener('pause', () => {
-  // Restore background music volume
-  const bgMusic = document.getElementById('bgMusic');
-  if(bgMusic) bgMusic.volume = 0.08;
   if(audioEl.currentTime >= audioEl.duration && isFinite(audioEl.duration)){
     setPlayButtonState('play');
   }else{
     setPlayButtonState('play');
   }
+  // Restore background music volume
+  const bgMusic = document.getElementById('bgMusic');
+  if(bgMusic) bgMusic.volume = 0.08;
+});
+audioEl.addEventListener('ended', () => {
+  // Restore background music volume when audio finishes
+  const bgMusic = document.getElementById('bgMusic');
+  if(bgMusic) bgMusic.volume = 0.08;
 });
 skipRevealBtn.addEventListener('click', () => {
   if(currentDay !== null){
