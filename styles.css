@@ -197,6 +197,23 @@ h1{
 }
 .zoom-frame img{width:100%;height:100%;object-fit:cover;transition:opacity .4s ease, transform .4s ease}
 .day-image{width:100%;height:100%;object-fit:cover;opacity:1}
+.signature-overlay{
+  position:absolute;
+  left:50%;
+  bottom:18%;
+  transform:translateX(-50%);
+  /* use 85% of the frame width */
+  width: 85% !important;
+  height: auto !important;
+  max-width: 85%;
+  max-height:40%;
+  object-fit: contain !important;
+  opacity:0.92;
+  filter:drop-shadow(0 3px 8px rgba(0,0,0,0.4));
+  pointer-events:none;
+  transition:opacity .3s ease;
+  z-index:3;
+}
 .artist-overlay{
   position:absolute;
   inset:auto 0 0 0;
@@ -209,6 +226,7 @@ h1{
   text-align:center;
   text-shadow:0 2px 10px rgba(0,0,0,0.45);
   pointer-events:none;
+  z-index:2;
 }
 .player-controls{
   width:100%;
@@ -245,19 +263,14 @@ h1{
   transform:translate(-50%,-50%);
 }
 .player-btn.play-state::before{
-  width:0;
-  height:0;
-  border-top:12px solid transparent;
-  border-bottom:12px solid transparent;
-  border-left:18px solid #111;
-  transform:translate(-50%,-50%);
+  width:24px;
+  height:24px;
+  background:url("assets/images/play.fill.svg") center/80% no-repeat;
 }
 .player-btn.pause-state::before{
-  width:14px;
+  width:18px;
   height:18px;
-  background:linear-gradient(90deg, #111 0 40%, transparent 40% 60%, #111 60% 100%);
-  box-shadow:none;
-  transform:translate(-50%,-50%);
+  background:url("assets/images/pause.fill.svg") center/85% no-repeat;
 }
 .skip-btn{
   background:var(--accent-2);

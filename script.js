@@ -7,6 +7,7 @@ const riddleText = document.getElementById('riddleText');
 const audioEl = document.getElementById('audio');
 const revealBtn = document.getElementById('revealBtn');
 const singerReveal = document.getElementById('singerReveal');
+const signatureOverlay = document.getElementById('signatureOverlay');
 const closeBtn = document.getElementById('closeBtn');
 const artistOverlay = document.getElementById('artistOverlay');
 const artistLabel = document.getElementById('artistLabel');
@@ -21,8 +22,23 @@ const timeRemaining = document.getElementById('timeRemaining');
 let currentDay = null;
 let currentBackSrc = '';
 let currentFrontSrc = '';
+let currentSignatureSrc = '';
 let isRevealed = false;
 let isScrubbing = false;
+let currentArtist = '';
+
+function updateSignatureVisibility(){
+  // Show signature when a signature asset exists and the front is revealed
+  const showSignature = currentSignatureSrc && isRevealed;
+  if(showSignature){
+    signatureOverlay.src = currentSignatureSrc;
+    signatureOverlay.classList.remove('hidden');
+    signatureOverlay.classList.add('front-visible');
+    return;
+  }
+  signatureOverlay.classList.remove('front-visible');
+  signatureOverlay.classList.add('hidden');
+}
 
 // Add artist metadata here to surface the singer name on the back image
 const dayMeta = {
@@ -165,6 +181,9 @@ function openModal(day){
   revealBtn.classList.add('hidden');
   singerReveal.classList.add('hidden');
   singerReveal.style.opacity = '0';
+  signatureOverlay.classList.add('hidden');
+  signatureOverlay.src = '';
+  currentSignatureSrc = '';
   setPlayButtonState('play');
   progressFill.style.width = '0%';
   progressHandle.style.left = '0%';
@@ -173,12 +192,9 @@ function openModal(day){
   skipRevealBtn.classList.remove('ready');
   riddleText.textContent = `Day ${day} — tap Play to start the audio.`;
   const meta = dayMeta[Number(day)];
-  if(meta && meta.artist){
-    artistLabel.textContent = meta.artist;
-    artistOverlay.classList.remove('hidden');
-  }else{
-    artistOverlay.classList.add('hidden');
-  }
+  currentArtist = meta && meta.artist ? meta.artist : '';
+  if(currentArtist){ artistLabel.textContent = currentArtist; }
+  artistOverlay.classList.add('hidden');
 
   // set day back image inline; prefer JPG then PNG then SVG
   const dayImg = document.getElementById('dayImg');
@@ -197,6 +213,33 @@ function openModal(day){
     }catch(e){ dayImg.src = backSvg; currentBackSrc = backSvg; }
   })();
   dayImg.alt = `Day ${day}`;
+
+  // load optional signature overlay for the back image (prefers SVG, falls back to PNG)
+  const signatureSvg = `assets/signatures/signature-day-${day}.svg`;
+  const signaturePng = `assets/signatures/signature-day-${day}.png`;
+  (async ()=>{
+    try{
+      let r = await fetch(signatureSvg, { method: 'HEAD' });
+      if(r.ok){
+        signatureOverlay.src = signatureSvg;
+        currentSignatureSrc = signatureSvg;
+        updateSignatureVisibility();
+        return;
+      }
+      r = await fetch(signaturePng, { method: 'HEAD' });
+      if(r.ok){
+        signatureOverlay.src = signaturePng;
+        currentSignatureSrc = signaturePng;
+        updateSignatureVisibility();
+        return;
+      }
+      signatureOverlay.classList.add('hidden');
+      currentSignatureSrc = '';
+    }catch(e){
+      signatureOverlay.classList.add('hidden');
+      currentSignatureSrc = '';
+    }
+  })();
 
   audioEl.oncanplay = () => { updateProgress(); };
 
@@ -226,7 +269,17 @@ function doReveal(day){
         }
       }
     }catch(e){ currentFrontSrc = 'assets/images/singer-front.png'; dayImg.src = currentFrontSrc; }
-    finally{ dayImg.style.opacity = '1'; revealBtn.classList.add('hidden'); }
+    finally{
+      dayImg.style.opacity = '1';
+      revealBtn.classList.add('hidden');
+      if(isRevealed && currentArtist){
+        artistOverlay.classList.remove('hidden');
+        artistLabel.textContent = currentArtist;
+      }else{
+        artistOverlay.classList.add('hidden');
+      }
+      updateSignatureVisibility();
+    }
     return currentFrontSrc;
   })();
 }
@@ -267,16 +320,20 @@ skipRevealBtn.addEventListener('click', () => {
     audioEl.pause();
     const dayImg = document.getElementById('dayImg');
     if(!isRevealed){
+      isRevealed = true;
       doReveal(currentDay).then(()=>{
-        isRevealed = true;
         skipRevealBtn.classList.add('revealed');
         skipRevealBtn.setAttribute('aria-label','Hide singer');
+        artistOverlay.classList.add('hidden');
+        updateSignatureVisibility();
       });
     }else{
       dayImg.src = currentBackSrc || dayImg.src;
       isRevealed = false;
       skipRevealBtn.classList.remove('revealed');
       skipRevealBtn.setAttribute('aria-label','Reveal singer');
+      updateSignatureVisibility();
+      artistOverlay.classList.add('hidden');
     }
     skipRevealBtn.classList.add('ready');
     setPlayButtonState('play');
