@@ -1,4 +1,4 @@
-Jazz Riddel Advent Calendar
+Jazz Riddle Advent Calendar
 
 Simple static prototype of an advent calendar with 24 doors. Clicking a door opens a modal with a zoomed frame (about 400x400), plays an audio file, then shows a reveal button to show the singer's face.
 
