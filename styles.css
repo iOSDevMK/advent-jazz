@@ -22,8 +22,9 @@ body{
   color:var(--white);
   min-height:100vh;
   display:flex;
+  flex-direction:column;
   align-items:center;
-  justify-content:center;
+  justify-content:flex-start;
   padding:var(--page-padding);
   position:relative;
   overflow-x:hidden;
@@ -87,6 +88,53 @@ h1{
 }
 .music-toggle:hover{background:rgba(0,0,0,0.85)}
 .music-toggle:focus-visible{outline:2px solid var(--accent-2);outline-offset:3px}
+.brand-link{
+  position:fixed;
+  top:18px;
+  left:18px;
+  z-index:1200;
+  color:rgba(243,211,122,0.78);
+  text-decoration:none;
+  font-weight:600;
+  font-size:12px;
+  letter-spacing:0.01em;
+  padding:6px 10px;
+  border-radius:8px;
+  background:rgba(0,0,0,0.45);
+  border:1px solid rgba(212,175,55,0.2);
+  box-shadow:0 8px 18px rgba(0,0,0,0.25);
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.brand-link::before{
+  content:"";
+  width:16px;
+  height:16px;
+  display:block;
+  background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 24 24'%3E%3Cpath d='M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm0 2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H7zm5 3.25A4.75 4.75 0 1 1 7.25 13 4.75 4.75 0 0 1 12 8.25zm0 2a2.75 2.75 0 1 0 2.75 2.75A2.75 2.75 0 0 0 12 10.25zm4.38-3.63a1.13 1.13 0 1 1-1.12 1.13 1.13 1.13 0 0 1 1.12-1.13z'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 24 24'%3E%3Cpath d='M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm0 2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H7zm5 3.25A4.75 4.75 0 1 1 7.25 13 4.75 4.75 0 0 1 12 8.25zm0 2a2.75 2.75 0 1 0 2.75 2.75A2.75 2.75 0 0 0 12 10.25zm4.38-3.63a1.13 1.13 0 1 1-1.12 1.13 1.13 1.13 0 0 1 1.12-1.13z'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.brand-link:hover{color:var(--accent);background:rgba(0,0,0,0.65)}
+.brand-link:focus-visible{outline:2px solid var(--accent-2);outline-offset:3px}
+.site-footer{
+  width:100%;
+  max-width:1320px;
+  margin:24px auto 0;
+  color:#f8e9c4;
+  font-size:13px;
+  line-height:1.55;
+  text-align:center;
+  padding:12px 16px 14px;
+  background:transparent;
+  border:none;
+  border-radius:0;
+  box-shadow:none;
+  text-shadow:0 1px 8px rgba(0,0,0,0.6);
+  position:relative;
+  z-index:2;
+}
 .subtitle{
   text-align:center;
   margin:0 0 24px;

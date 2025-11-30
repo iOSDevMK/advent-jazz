@@ -228,7 +228,20 @@ function updateMusicToggleLabel(){
   musicToggle.setAttribute('aria-pressed', String(bgMusicEnabled));
 }
 function toggleBgMusic(){
+  if(!bgMusic){
+    return;
+  }
+  // If enabled but paused (e.g., autoplay blocked), try to start without flipping state
+  if(bgMusicEnabled && bgMusic.paused){
+    bgMusic.play().catch(()=>{});
+    return;
+  }
   bgMusicEnabled = !bgMusicEnabled;
+  if(!bgMusicEnabled){
+    bgMusic.pause();
+  }else{
+    bgMusic.play().catch(()=>{});
+  }
   applyBgMusicState(!audioEl.paused && !audioEl.ended);
   updateMusicToggleLabel();
 }
