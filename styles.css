@@ -333,6 +333,36 @@ h1{
   font-size:14px;
   line-height:1.5;
 }
+.lock-audio-actions{
+  display:flex;
+  justify-content:flex-start;
+  margin-top:8px;
+  gap:8px;
+}
+.fact-audio-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  min-width:140px;
+}
+.fact-audio-btn::before{
+  content:"";
+  width:16px;
+  height:16px;
+  display:block;
+  background:currentColor;
+  -webkit-mask:center/80% no-repeat;
+          mask:center/80% no-repeat;
+}
+.fact-audio-btn.play::before{
+  -webkit-mask-image:url("assets/images/play.fill.svg");
+          mask-image:url("assets/images/play.fill.svg");
+}
+.fact-audio-btn.pause::before{
+  -webkit-mask-image:url("assets/images/pause.fill.svg");
+          mask-image:url("assets/images/pause.fill.svg");
+}
 .modal-content{
   position:relative;
   background:linear-gradient(145deg, rgba(18,18,20,0.95), rgba(12,12,14,0.92));

@@ -25,8 +25,13 @@ const lockCloseBtn = document.getElementById('lockCloseBtn');
 const lockLead = document.getElementById('lockLead');
 const lockHistory = document.getElementById('lockHistory');
 const musicToggle = document.getElementById('musicToggle');
+const factAudioBtn = document.getElementById('factAudioBtn');
 const bgMusic = document.getElementById('bgMusic');
 const factAudio = document.getElementById('factAudio');
+const FACT_AUDIO_MAX = 24; // available jazz fact audio files
+const BG_VOL_NORMAL = 0.08;
+const BG_VOL_DAY_DUCK = 0.02;
+const BG_VOL_FACT_DUCK = 0.01;
 const DEBUG_OPEN = new URLSearchParams(location.search).has('debug');
 const IS_LOCALHOST = ['localhost','127.0.0.1','::1'].includes(location.hostname);
 const DEV_OPEN = IS_LOCALHOST && DEBUG_OPEN;
@@ -38,6 +43,8 @@ let isRevealed = false;
 let isScrubbing = false;
 let currentArtist = '';
 let bgMusicEnabled = true;
+let isFactAudioPlaying = false;
+let factAudioReady = false;
 const jazzFacts = [
   'Jazz took shape in New Orleans around 1900 when African rhythms met European harmony. Congo Square gatherings kept drumming traditions alive. The port city’s brass bands added parade energy. Early improvisers blurred written and oral traditions. That mix seeded the groove we now call Jazz.',
   'Ragtime brought a jaunty offbeat and syncopated sparkle. The blues added tension, release, and direct storytelling. Together they gave early Jazz its snap and soul. Piano rolls spread the style across the country. Dancers and saloons demanded that feel every night.',
@@ -186,7 +193,7 @@ function showLockDialog(day){
       <p class="fact-eyebrow">Did you know?</p>
       <p class="fact-body">${fact}</p>
     `;
-    playFactAudio(factIndex + 1);
+    prepareFactAudio(factIndex + 1);
   }
   if(lockLead){
     const now = new Date();
@@ -220,7 +227,12 @@ function applyBgMusicState(isDayPlaying){
     bgMusic.pause();
     return;
   }
-  const targetVol = isDayPlaying ? 0.02 : 0.08;
+  let targetVol = BG_VOL_NORMAL;
+  if(isFactAudioPlaying){
+    targetVol = BG_VOL_FACT_DUCK;
+  }else if(isDayPlaying){
+    targetVol = BG_VOL_DAY_DUCK;
+  }
   bgMusic.volume = targetVol;
   if(bgMusic.paused){
     bgMusic.play().catch(()=>{});
@@ -250,20 +262,108 @@ if(musicToggle){
   musicToggle.addEventListener('click', toggleBgMusic);
 }
 
-function playFactAudio(idx){
-  if(!factAudio) return;
-  const src = `assets/audio/audio-jazzfact-${idx}.mp3`;
+function prepareFactAudio(idx){
+  if(!factAudio || !factAudioBtn){
+    factAudioReady = false;
+    return;
+  }
+  if(idx > FACT_AUDIO_MAX){
+    factAudioReady = false;
+    factAudioBtn.disabled = true;
+    factAudioBtn.textContent = 'No audio available';
+    return;
+  }
+  const src = `assets/audio/jazzfacts/audio_jazzfact_${idx}.mp3`;
   if(factAudio.dataset.src !== src){
     factAudio.dataset.src = src;
     factAudio.src = src;
+    factAudio.load();
   }
   factAudio.currentTime = 0;
-  factAudio.play().catch(()=>{});
+  factAudioReady = true;
+  factAudioBtn.disabled = false;
+  factAudioBtn.textContent = 'Play fact audio';
+  factAudioBtn.classList.remove('pause');
+  factAudioBtn.classList.add('play');
+}
+function playFactAudio(){
+  if(!factAudio) return;
+  if(!factAudioReady){
+    factAudio.load();
+    factAudioReady = true;
+  }
+  factAudio.currentTime = 0;
+  factAudio.play().catch(() => {
+    if(factAudioBtn){
+      factAudioBtn.textContent = 'Audio unavailable';
+      factAudioBtn.disabled = false;
+    }
+  });
+}
+function toggleFactAudio(){
+  if(!factAudio) return;
+  if(!factAudioReady){
+    playFactAudio();
+    return;
+  }
+  if(factAudio.paused){
+    factAudio.play().catch(() => {
+      if(factAudioBtn){
+        factAudioBtn.textContent = 'Audio unavailable';
+        factAudioBtn.disabled = false;
+        factAudioBtn.classList.remove('play','pause');
+      }
+    });
+  }else{
+    factAudio.pause();
+  }
 }
 function stopFactAudio(){
   if(!factAudio) return;
   factAudio.pause();
   factAudio.currentTime = 0;
+}
+if(factAudioBtn){
+  factAudioBtn.addEventListener('click', toggleFactAudio);
+}
+if(factAudio){
+  factAudio.addEventListener('play', () => {
+    isFactAudioPlaying = true;
+    if(factAudioBtn){
+      factAudioBtn.textContent = 'Pause fact audio';
+      factAudioBtn.classList.remove('play');
+      factAudioBtn.classList.add('pause');
+    }
+    applyBgMusicState(!audioEl.paused && !audioEl.ended);
+  });
+  factAudio.addEventListener('error', () => {
+    if(factAudioBtn){
+      factAudioBtn.textContent = 'Audio unavailable';
+      factAudioBtn.disabled = false;
+      factAudioBtn.classList.remove('play','pause');
+    }
+    isFactAudioPlaying = false;
+    applyBgMusicState(!audioEl.paused && !audioEl.ended);
+  });
+  factAudio.addEventListener('ended', () => {
+    isFactAudioPlaying = false;
+    applyBgMusicState(!audioEl.paused && !audioEl.ended);
+    if(factAudioBtn){
+      factAudioBtn.textContent = 'Play fact audio';
+      factAudioBtn.classList.remove('pause');
+      factAudioBtn.classList.add('play');
+    }
+  });
+  factAudio.addEventListener('pause', () => {
+    if(factAudio.ended) return;
+    isFactAudioPlaying = false;
+    applyBgMusicState(!audioEl.paused && !audioEl.ended);
+    if(factAudioBtn){
+      factAudioBtn.textContent = 'Play fact audio';
+      factAudioBtn.classList.remove('pause');
+      factAudioBtn.classList.add('play');
+    }
+  });
 }
 
 function formatTime(value, fallback = '--:--'){
