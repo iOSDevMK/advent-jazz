@@ -204,7 +204,7 @@
 
 ---
 
-## 15. Jazzmeia Horn
+## 15. x
 **Herkunft:** Dallas, Texas  
 **Lebensumstände:** Wuchs in einer kirchlichen Musikerfamilie auf, frühe Stimme, frühe Bühne.  
 **Mini-Bio:** Moderne Jazzvokalistin mit beeindruckender Technik und Improvisationsfreude.  
@@ -260,7 +260,7 @@
 
 ---
 
-## 19. José James
+## 19. Tony Bennett
 **Herkunft:** Minneapolis, USA  
 **Lebensumstände:** Wuchs in multikultureller Umgebung auf; hörte Soul, Jazz und R&B von Kindheit an.  
 **Mini-Bio:** NeoSoul-Jazz-Künstler, der Vintage-Wärme mit moderner Lässigkeit verbindet.  
@@ -271,6 +271,7 @@
 **Anekdote:** Wird oft „der moderne Bill Withers“ genannt — eine Bezeichnung, die er liebt.  
 **Interview-Opener:**  
 *Es gibt Stimmen, die wirken wie eine warme Tasse in kalten Händen — sanft, beruhigend, echt. Ein Klang, der modern klingt und doch an früher erinnert. Wie entsteht bei dir diese Mischung aus Nostalgie und Jetzt?*
+
 
 ---
 

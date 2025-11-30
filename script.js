@@ -53,9 +53,28 @@ function updateSignatureVisibility(){
 const dayMeta = {
   1: { artist: 'Ella Fitzgerald' },
   2: { artist: 'Louis Armstrong' },
-  3: { artist: 'Billie Holiday' },
-  4: { artist: 'Sarah Vaughan' },
-  // Continue through day 24 as your assets are added
+  3: { artist: 'Nina Simone' },
+  4: { artist: 'Melody Gardot' },
+  5: { artist: 'Gregory Porter' },
+  6: { artist: 'Nat King Cole' },
+  7: { artist: 'Billie Holiday' },
+  8: { artist: 'Madeleine Peyroux' },
+  9: { artist: 'Jamie Cullum' },
+  10: { artist: 'Dean Martin' },
+  11: { artist: 'Norah Jones' },
+  12: { artist: 'Tony Bennett' },
+  13: { artist: 'Michael Bublé' },
+  14: { artist: 'Dr. John' },
+  15: { artist: 'Jazzmeia Horn' },
+  16: { artist: 'ZAZ' },
+  17: { artist: 'Chet Baker' },
+  18: { artist: 'Samara Joy' },
+  19: { artist: 'Sarah Vaughan' },
+  20: { artist: 'Stacey Kent' },
+  21: { artist: 'Harry Connick Jr.' },
+  22: { artist: 'Peggy Lee' },
+  23: { artist: 'Diana Krall' },
+  24: { artist: 'Diane Reeves' },
 };
 
 // create 24 doors
