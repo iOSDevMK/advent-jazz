@@ -26,6 +26,7 @@ const lockLead = document.getElementById('lockLead');
 const lockHistory = document.getElementById('lockHistory');
 const musicToggle = document.getElementById('musicToggle');
 const bgMusic = document.getElementById('bgMusic');
+const factAudio = document.getElementById('factAudio');
 const DEBUG_OPEN = new URLSearchParams(location.search).has('debug');
 const IS_LOCALHOST = ['localhost','127.0.0.1','::1'].includes(location.hostname);
 const DEV_OPEN = IS_LOCALHOST && DEBUG_OPEN;
@@ -179,11 +180,13 @@ function onDoorClick(e){
 
 function showLockDialog(day){
   if(lockHistory){
-    const fact = jazzFacts[(Number(day) - 1) % jazzFacts.length];
+    const factIndex = (Number(day) - 1) % jazzFacts.length;
+    const fact = jazzFacts[factIndex];
     lockHistory.innerHTML = `
       <p class="fact-eyebrow">Did you know?</p>
       <p class="fact-body">${fact}</p>
     `;
+    playFactAudio(factIndex + 1);
   }
   if(lockLead){
     const now = new Date();
@@ -201,6 +204,7 @@ function closeLockDialog(){
     lockDialog.classList.add('hidden');
     lockDialog.setAttribute('aria-hidden','true');
   }
+  stopFactAudio();
 }
 if(lockBackdrop) lockBackdrop.addEventListener('click', closeLockDialog);
 if(lockCloseBtn) lockCloseBtn.addEventListener('click', closeLockDialog);
@@ -244,6 +248,22 @@ function toggleBgMusic(){
 }
 if(musicToggle){
   musicToggle.addEventListener('click', toggleBgMusic);
+}
+
+function playFactAudio(idx){
+  if(!factAudio) return;
+  const src = `assets/audio/audio-jazzfact-${idx}.mp3`;
+  if(factAudio.dataset.src !== src){
+    factAudio.dataset.src = src;
+    factAudio.src = src;
+  }
+  factAudio.currentTime = 0;
+  factAudio.play().catch(()=>{});
+}
+function stopFactAudio(){
+  if(!factAudio) return;
+  factAudio.pause();
+  factAudio.currentTime = 0;
 }
 
 function formatTime(value, fallback = '--:--'){
