@@ -24,6 +24,8 @@ const lockBackdrop = document.getElementById('lockBackdrop');
 const lockCloseBtn = document.getElementById('lockCloseBtn');
 const lockLead = document.getElementById('lockLead');
 const lockHistory = document.getElementById('lockHistory');
+const lockSpeakBtn = document.getElementById('lockSpeakBtn');
+const IS_LOCALHOST = ['localhost','127.0.0.1','::1'].includes(location.hostname);
 let currentDay = null;
 let currentBackSrc = '';
 let currentFrontSrc = '';
@@ -110,7 +112,6 @@ const dayMeta = {
 
 const CALENDAR_MONTH = 11; // December (0-indexed)
 const calendarYear = new Date().getFullYear(); // Adjust if you want a specific year
-document.documentElement.classList.add('doors-prep');
 
 function getUnlockDate(day, nowRef = new Date()){
   // Doors open at local midnight for each December day
