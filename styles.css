@@ -89,9 +89,6 @@ h1{
   animation:door-pop .65s ease-out backwards;
   animation-delay:calc((var(--door-index, 1) - 1) * 0.04s);
 }
-.doors-prep .door{
-  animation:none !important;
-}
 /* Use a single door image as the closed-door background if present at assets/door.png */
 .door{
   background-image: url('assets/images/door.jpg');
@@ -169,11 +166,6 @@ h1{
   z-index:1;
   pointer-events:none;
 }
-.doors-prep .door::before{
-  opacity:1 !important;
-  transition:none;
-}
-.doors-prep .door::before,
 .door.locked::before{
   opacity:1;
 }

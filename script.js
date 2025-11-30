@@ -135,12 +135,12 @@ function setDoorLockState(door, now){
   const day = Number(door.dataset.day);
   const countdownEl = door.querySelector('.countdown-text');
   const unlockDate = getUnlockDate(day, now);
-  const isUnlocked = now >= unlockDate;
+  const isUnlocked = IS_LOCALHOST || now >= unlockDate;
   door.classList.toggle('locked', !isUnlocked);
   door.setAttribute('aria-disabled', String(!isUnlocked));
   if(!countdownEl) return;
   if(isUnlocked){
-    countdownEl.textContent = 'Open now';
+    countdownEl.textContent = IS_LOCALHOST ? 'Dev: open' : 'Open now';
     countdownEl.classList.add('open');
   }else{
     countdownEl.textContent = `Opens in ${formatCountdownMs(unlockDate - now)}`;
@@ -152,7 +152,7 @@ function setDoorLockState(door, now){
 const initialNow = new Date();
 for(let i=1;i<=24;i++){
   const d = document.createElement('button');
-  d.className = 'door locked';
+  d.className = 'door';
   d.innerHTML = `<span class="door-number">${i}</span><span class="countdown-text" aria-live="polite"></span>`;
   d.dataset.day = i;
   d.style.setProperty('--door-index', i);
@@ -163,12 +163,9 @@ for(let i=1;i<=24;i++){
 }
 updateDoorLocks();
 setInterval(updateDoorLocks, 1000);
-requestAnimationFrame(() => {
-  document.documentElement.classList.remove('doors-prep');
-});
 
 function onDoorClick(e){
-  if(e.currentTarget.classList.contains('locked')){
+  if(!IS_LOCALHOST && e.currentTarget.classList.contains('locked')){
     showLockDialog(e.currentTarget.dataset.day);
     return;
   }
