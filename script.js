@@ -24,7 +24,8 @@ const lockBackdrop = document.getElementById('lockBackdrop');
 const lockCloseBtn = document.getElementById('lockCloseBtn');
 const lockLead = document.getElementById('lockLead');
 const lockHistory = document.getElementById('lockHistory');
-const lockSpeakBtn = document.getElementById('lockSpeakBtn');
+const musicToggle = document.getElementById('musicToggle');
+const bgMusic = document.getElementById('bgMusic');
 const DEBUG_OPEN = new URLSearchParams(location.search).has('debug');
 const IS_LOCALHOST = ['localhost','127.0.0.1','::1'].includes(location.hostname);
 const DEV_OPEN = IS_LOCALHOST && DEBUG_OPEN;
@@ -35,6 +36,7 @@ let currentSignatureSrc = '';
 let isRevealed = false;
 let isScrubbing = false;
 let currentArtist = '';
+let bgMusicEnabled = true;
 const jazzFacts = [
   'Jazz took shape in New Orleans around 1900 when African rhythms met European harmony. Congo Square gatherings kept drumming traditions alive. The port city’s brass bands added parade energy. Early improvisers blurred written and oral traditions. That mix seeded the groove we now call Jazz.',
   'Ragtime brought a jaunty offbeat and syncopated sparkle. The blues added tension, release, and direct storytelling. Together they gave early Jazz its snap and soul. Piano rolls spread the style across the country. Dancers and saloons demanded that feel every night.',
@@ -207,6 +209,32 @@ document.addEventListener('keydown', (e) => {
     closeLockDialog();
   }
 });
+
+function applyBgMusicState(isDayPlaying){
+  if(!bgMusic) return;
+  if(!bgMusicEnabled){
+    bgMusic.pause();
+    return;
+  }
+  const targetVol = isDayPlaying ? 0.02 : 0.08;
+  bgMusic.volume = targetVol;
+  if(bgMusic.paused){
+    bgMusic.play().catch(()=>{});
+  }
+}
+function updateMusicToggleLabel(){
+  if(!musicToggle) return;
+  musicToggle.textContent = bgMusicEnabled ? 'Music on' : 'Music off';
+  musicToggle.setAttribute('aria-pressed', String(bgMusicEnabled));
+}
+function toggleBgMusic(){
+  bgMusicEnabled = !bgMusicEnabled;
+  applyBgMusicState(!audioEl.paused && !audioEl.ended);
+  updateMusicToggleLabel();
+}
+if(musicToggle){
+  musicToggle.addEventListener('click', toggleBgMusic);
+}
 
 function formatTime(value, fallback = '--:--'){
   if(!isFinite(value) || value < 0) return fallback;
@@ -429,8 +457,7 @@ function closeModal(){
   audioEl.pause();
   audioEl.currentTime = 0;
   // Restore background music volume
-  const bgMusic = document.getElementById('bgMusic');
-  if(bgMusic) bgMusic.volume = 0.08;
+  applyBgMusicState(false);
   document.querySelectorAll('.door.active').forEach(d => d.classList.remove('active'));
   modal.classList.add('hidden');
   modal.setAttribute('aria-hidden','true');
@@ -454,8 +481,7 @@ audioEl.addEventListener('loadedmetadata', updateProgress);
 audioEl.addEventListener('play', () => { 
   setPlayButtonState('pause');
   // Duck background music when day audio plays
-  const bgMusic = document.getElementById('bgMusic');
-  if(bgMusic) bgMusic.volume = 0.02;
+  applyBgMusicState(true);
 });
 audioEl.addEventListener('pause', () => {
   if(audioEl.currentTime >= audioEl.duration && isFinite(audioEl.duration)){
@@ -464,13 +490,11 @@ audioEl.addEventListener('pause', () => {
     setPlayButtonState('play');
   }
   // Restore background music volume
-  const bgMusic = document.getElementById('bgMusic');
-  if(bgMusic) bgMusic.volume = 0.08;
+  applyBgMusicState(false);
 });
 audioEl.addEventListener('ended', () => {
   // Restore background music volume when audio finishes
-  const bgMusic = document.getElementById('bgMusic');
-  if(bgMusic) bgMusic.volume = 0.08;
+  applyBgMusicState(false);
 });
 skipRevealBtn.addEventListener('click', () => {
   if(currentDay !== null){
@@ -508,14 +532,14 @@ progressHandle.addEventListener('pointerdown', (e) => {
 });
 
 // Background music
-const bgMusic = document.getElementById('bgMusic');
 if(bgMusic){
-  bgMusic.volume = 0.08;
-  // Try to auto-play immediately
+  applyBgMusicState(false);
   bgMusic.play().catch(() => {
     // If blocked by browser, play on any user interaction
     const playBg = () => {
-      bgMusic.play().catch(()=>{});
+      if(bgMusicEnabled){
+        bgMusic.play().catch(()=>{});
+      }
       document.removeEventListener('click', playBg);
       document.removeEventListener('keydown', playBg);
     };
@@ -523,3 +547,4 @@ if(bgMusic){
     document.addEventListener('keydown', playBg);
   });
 }
+updateMusicToggleLabel();
