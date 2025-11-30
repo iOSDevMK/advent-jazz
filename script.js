@@ -224,23 +224,20 @@ function applyBgMusicState(isDayPlaying){
 }
 function updateMusicToggleLabel(){
   if(!musicToggle) return;
-  musicToggle.textContent = bgMusicEnabled ? 'Music on' : 'Music off';
+  musicToggle.textContent = bgMusicEnabled ? 'Turn music off' : 'Turn music on';
   musicToggle.setAttribute('aria-pressed', String(bgMusicEnabled));
 }
 function toggleBgMusic(){
   if(!bgMusic){
     return;
   }
-  // If enabled but paused (e.g., autoplay blocked), try to start without flipping state
-  if(bgMusicEnabled && bgMusic.paused){
-    bgMusic.play().catch(()=>{});
-    return;
-  }
-  bgMusicEnabled = !bgMusicEnabled;
-  if(!bgMusicEnabled){
+  if(bgMusicEnabled){
+    bgMusicEnabled = false;
     bgMusic.pause();
   }else{
+    bgMusicEnabled = true;
     bgMusic.play().catch(()=>{});
+    applyBgMusicState(!audioEl.paused && !audioEl.ended);
   }
   applyBgMusicState(!audioEl.paused && !audioEl.ended);
   updateMusicToggleLabel();
