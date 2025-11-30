@@ -25,7 +25,9 @@ const lockCloseBtn = document.getElementById('lockCloseBtn');
 const lockLead = document.getElementById('lockLead');
 const lockHistory = document.getElementById('lockHistory');
 const lockSpeakBtn = document.getElementById('lockSpeakBtn');
+const DEBUG_OPEN = new URLSearchParams(location.search).has('debug');
 const IS_LOCALHOST = ['localhost','127.0.0.1','::1'].includes(location.hostname);
+const DEV_OPEN = IS_LOCALHOST && DEBUG_OPEN;
 let currentDay = null;
 let currentBackSrc = '';
 let currentFrontSrc = '';
@@ -135,12 +137,12 @@ function setDoorLockState(door, now){
   const day = Number(door.dataset.day);
   const countdownEl = door.querySelector('.countdown-text');
   const unlockDate = getUnlockDate(day, now);
-  const isUnlocked = IS_LOCALHOST || now >= unlockDate;
+  const isUnlocked = DEV_OPEN || now >= unlockDate;
   door.classList.toggle('locked', !isUnlocked);
   door.setAttribute('aria-disabled', String(!isUnlocked));
   if(!countdownEl) return;
   if(isUnlocked){
-    countdownEl.textContent = IS_LOCALHOST ? 'Dev: open' : 'Open now';
+    countdownEl.textContent = DEV_OPEN ? 'Dev: open' : 'Open now';
     countdownEl.classList.add('open');
   }else{
     countdownEl.textContent = `Opens in ${formatCountdownMs(unlockDate - now)}`;
@@ -165,7 +167,7 @@ updateDoorLocks();
 setInterval(updateDoorLocks, 1000);
 
 function onDoorClick(e){
-  if(!IS_LOCALHOST && e.currentTarget.classList.contains('locked')){
+  if(!DEV_OPEN && e.currentTarget.classList.contains('locked')){
     showLockDialog(e.currentTarget.dataset.day);
     return;
   }
