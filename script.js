@@ -32,30 +32,30 @@ let isRevealed = false;
 let isScrubbing = false;
 let currentArtist = '';
 const jazzFacts = [
-  'Jazz took shape in New Orleans around 1900 when African rhythms met European harmony. Congo Square gatherings kept drumming traditions alive and seeded the groove.',
-  'Ragtime brought the jaunty offbeat, and the blues added tension and storytelling. Together they gave early jazz its snap and soul.',
-  'Cornetist Buddy Bolden was an early folk hero—loud, loose, and fearless. His improvising proved personality could trump the written page.',
-  'In 1917 the Original Dixieland Jass Band cut one of the first jazz records. Soon many players headed to Chicago, where clubs soaked up the new sound.',
-  'Louis Armstrong made the solo the main event. His warm tone and playful scat turned every chorus into a story.',
-  'Duke Ellington raised big-band jazz to a composer’s art. At the Cotton Club he painted with tone colors while keeping the swing alive.',
-  'Kansas City nurtured a gritty, riff-driven swing. Count Basie’s rhythm section perfected the light, buoyant pulse that dancers loved.',
-  'Bebop erupted in the 1940s as a rebellion. Dizzy Gillespie and Charlie Parker pushed lightning tempos and dense harmonies in late-night jam sessions.',
-  'Thelonious Monk used jagged melodies and carefully placed silences. His tunes sound quirky yet glow with deep blues feeling.',
-  'Cool jazz slowed the pace and softened the edges. Miles Davis’s “Birth of the Cool” showed how quiet tones can still hit hard.',
-  'On the West Coast, arranged, airy lines thrived. Gerry Mulligan and Chet Baker personified that clear, relaxed sound.',
-  'Hard bop pulled blues and gospel back to center in the 1950s. Art Blakey and Horace Silver balanced earthy grooves with fiery solos.',
-  'Modal jazz reduced chord changes to open space for melody. Miles Davis’s “Kind of Blue” became the touchstone of that freedom.',
-  'John Coltrane chased urgency and spirit from “Giant Steps” to “A Love Supreme.” His sheets of sound feel like prayer and storm at once.',
-  'Free jazz broke forms and embraced collective improvisation. Ornette Coleman and later Coltrane challenged listeners with radical openness.',
-  'Latin jazz fused Afro-Cuban rhythm with jazz harmony. Bossa nova and samba brought a sway that reshaped club playlists worldwide.',
-  'Jimmy Smith’s Hammond B3 sound defined soul jazz. Churchy chords and blues riffs turned into an endless, joyful party.',
-  'Fusion in the 1970s mixed rock volume, funk grooves, and electronics. Miles Davis’s “Bitches Brew” and Weather Report electrified improvisation.',
-  'The ECM label cultivated a spacious, echoing aesthetic. European voices found an airy, chamber-like home for improvisation.',
-  'Vocal jazz stays central: Ella Fitzgerald’s scat, Sarah Vaughan’s velvet, and Billie Holiday’s storytelling show the voice’s many colors.',
-  'Swing was a social force as much as music. Big bands fueled Lindy Hop and Jitterbug nights in packed dance halls.',
-  'Jazz education moved into universities, from Berklee to North Texas. Ear training, theory, and improvisation became formal coursework.',
-  'European scenes built their own flavors, from Nordic lyricism to French Manouche swing born with Django Reinhardt.',
-  'Today jazz blends with hip-hop, electronic textures, and global grooves. Sampling, looping, and improvising coexist without genre fences.'
+  'Jazz took shape in New Orleans around 1900 when African rhythms met European harmony. Congo Square gatherings kept drumming traditions alive. The port city’s brass bands added parade energy. Early improvisers blurred written and oral traditions. That mix seeded the groove we now call Jazz.',
+  'Ragtime brought a jaunty offbeat and syncopated sparkle. The blues added tension, release, and direct storytelling. Together they gave early Jazz its snap and soul. Piano rolls spread the style across the country. Dancers and saloons demanded that feel every night.',
+  'Cornetist Buddy Bolden became an early folk hero—loud, loose, and fearless. His improvising proved personality could trump the written page. Crowds followed his band through parades and dances. Legends say his sound could be heard for blocks. His spirit set the tone for Jazz’s boldness.',
+  'In 1917 the Original Dixieland Jass Band cut one of the first Jazz records. The novelty sound sparked national curiosity. Musicians soon traveled north to Chicago’s clubs and dance halls. There the music gained new audiences and better pay. Records turned local scenes into national waves.',
+  'Louis Armstrong made the solo the main event. His warm tone, rhythmic swing, and playful scat turned every chorus into a story. Audiences heard a new, conversational horn voice. He influenced singers as much as instrumentalists. Jazz phrasing still echoes his approach.',
+  'Duke Ellington raised big-band Jazz to a composer’s art. At the Cotton Club he painted with tone colors while keeping the swing alive. He wrote parts for specific players’ sounds. Suites and sacred concerts showed Jazz could be concert music. His band became his instrument.',
+  'Kansas City nurtured a gritty, riff-driven swing. Count Basie’s rhythm section perfected the light, buoyant pulse dancers loved. Jam sessions stretched solos deep into the night. Head arrangements let bands adapt on the fly. The result was relaxed but unstoppable Jazz momentum.',
+  'Bebop erupted in the 1940s as a rebellion. Dizzy Gillespie and Charlie Parker pushed lightning tempos and dense harmonies. Small combos replaced big bands in late-night jam sessions. Lines became angular, and rhythm sections hit harder. Jazz turned inward to reward deep listening.',
+  'Thelonious Monk used jagged melodies and carefully placed silences. His tunes sound quirky yet glow with deep blues feeling. Pianists learned that space could swing as hard as notes. His dissonances feel like characters in a story. Modern Jazz harmony owes him its edges.',
+  'Cool Jazz slowed the pace and softened the edges. Miles Davis’s “Birth of the Cool” showed how quiet tones can still hit hard. Arrangers layered subtle horn voicings over light drums. West Coast players embraced the airy approach. The mood proved that Jazz could whisper and still command attention.',
+  'On the West Coast, arranged, airy lines thrived. Gerry Mulligan and Chet Baker personified that clear, relaxed sound. Counterpoint between horns replaced dense chord hits. Audiences heard Jazz as sleek, sunlit, and modern. The vibe contrasted the East Coast’s grit.',
+  'Hard Bop pulled blues and gospel back to center in the 1950s. Art Blakey and Horace Silver balanced earthy grooves with fiery solos. Churchy harmonies met driving ride cymbals. Audiences clapped along to call-and-response riffs. Jazz felt both sophisticated and down-home.',
+  'Modal Jazz reduced chord changes to open space for melody. Miles Davis’s “Kind of Blue” became the touchstone of that freedom. Players lingered on modes instead of racing through progressions. Solos breathed more, inviting lyrical phrasing. The approach reshaped how Jazz thinks about harmony.',
+  'John Coltrane chased urgency and spirit from “Giant Steps” to “A Love Supreme.” His sheets of sound feel like prayer and storm at once. Each phase showed deeper harmonic exploration. His classic quartet stretched time and intensity. Jazz found a new spiritual voice in his horn.',
+  'Free Jazz broke forms and embraced collective improvisation. Ornette Coleman and later Coltrane challenged listeners with radical openness. Melody and rhythm could emerge spontaneously. Musicians reacted in real time without fixed roles. It proved Jazz could question every rule and still communicate.',
+  'Latin Jazz fused Afro-Cuban rhythm with Jazz harmony. Bossa nova and samba brought a sway that reshaped club playlists worldwide. Dizzy Gillespie’s collaborations highlighted congas and claves. Brazilian songcraft met New York horn lines. Dancers felt a new kind of Jazz pulse.',
+  'Jimmy Smith’s Hammond B3 sound defined Soul Jazz. Churchy chords and blues riffs turned into an endless, joyful party. Guitar and drums locked into greasy shuffles. Clubs filled with the smell of tube amps and groove. Jazz could feel like Sunday service and Saturday night at once.',
+  'Fusion in the 1970s mixed rock volume, funk grooves, and electronics. Miles Davis’s “Bitches Brew” and Weather Report electrified improvisation. Synths and pedals expanded tone palettes. Drummers borrowed backbeats from funk. Jazz proved it could plug in without losing its edge.',
+  'The ECM label cultivated a spacious, echoing aesthetic. European voices found an airy, chamber-like home for improvisation. Silence and reverb became part of the music. Folk melodies intertwined with modern harmony. Jazz sounded like landscapes and long horizons.',
+  'Vocal Jazz stays central to the story. Ella Fitzgerald’s scat, Sarah Vaughan’s velvet, and Billie Holiday’s phrasing show the voice’s many colors. Each singer turned lyrics into personal confession. Standards became living stories night after night. Jazz singing keeps reinventing the songbook.',
+  'Swing was a social force as much as music. Big bands fueled Lindy Hop and Jitterbug nights in packed halls. Radio broadcasts spread band battles nationwide. Arrangers crafted shout choruses to lift the floor. Jazz gave dancers a shared heartbeat.',
+  'Jazz education moved into universities, from Berklee to North Texas. Ear training, theory, and improvisation became formal coursework. Students learned to transcribe solos and analyze harmony. Ensemble labs simulated bandstand realities. The academy helped preserve and evolve Jazz vocabulary.',
+  'European scenes built their own flavors, from Nordic lyricism to French Manouche swing. Django Reinhardt’s guitar defined the latter with dazzling runs. Scandinavian players embraced space and folk melody. Festivals connected scenes across borders. Jazz proved it thrives on local voices.',
+  'Today Jazz blends with hip-hop, electronic textures, and global grooves. Sampling, looping, and live improvising coexist without genre fences. Artists tour with laptops and horns side by side. Rhymes and solos trade storytelling duties. Jazz keeps evolving because it welcomes new voices.'
 ];
 
 function updateSignatureVisibility(){
@@ -110,6 +110,7 @@ const dayMeta = {
 
 const CALENDAR_MONTH = 11; // December (0-indexed)
 const calendarYear = new Date().getFullYear(); // Adjust if you want a specific year
+document.documentElement.classList.add('doors-prep');
 
 function getUnlockDate(day, nowRef = new Date()){
   // Doors open at local midnight for each December day
@@ -118,49 +119,52 @@ function getUnlockDate(day, nowRef = new Date()){
 }
 
 function formatCountdownMs(diffMs){
-  const totalSec = Math.max(0, Math.floor(diffMs / 1000));
-  const days = Math.floor(totalSec / 86400);
-  const hours = Math.floor((totalSec % 86400) / 3600);
-  const mins = Math.floor((totalSec % 3600) / 60);
-  const secs = totalSec % 60;
-  if(days > 0) return `${days}d ${hours}h`;
-  if(hours > 0) return `${hours}h ${mins}m`;
-  return `${mins}m ${secs}s`;
+  const totalMin = Math.max(0, Math.floor(diffMs / 60000));
+  const hours = Math.floor(totalMin / 60);
+  const mins = totalMin % 60;
+  return `${hours}h ${mins}m`;
 }
 
 function updateDoorLocks(){
   const now = new Date();
-  document.querySelectorAll('.door').forEach(door => {
-    const day = Number(door.dataset.day);
-    const countdownEl = door.querySelector('.countdown-text');
-    const unlockDate = getUnlockDate(day, now);
-    const isUnlocked = now >= unlockDate;
-    door.classList.toggle('locked', !isUnlocked);
-    door.setAttribute('aria-disabled', String(!isUnlocked));
-    if(!countdownEl) return;
-    if(isUnlocked){
-      countdownEl.textContent = 'Jetzt offen';
-      countdownEl.classList.add('open');
-    }else{
-      countdownEl.textContent = `Noch ${formatCountdownMs(unlockDate - now)}`;
-      countdownEl.classList.remove('open');
-    }
-  });
+  document.querySelectorAll('.door').forEach(door => setDoorLockState(door, now));
+}
+
+function setDoorLockState(door, now){
+  const day = Number(door.dataset.day);
+  const countdownEl = door.querySelector('.countdown-text');
+  const unlockDate = getUnlockDate(day, now);
+  const isUnlocked = now >= unlockDate;
+  door.classList.toggle('locked', !isUnlocked);
+  door.setAttribute('aria-disabled', String(!isUnlocked));
+  if(!countdownEl) return;
+  if(isUnlocked){
+    countdownEl.textContent = 'Open now';
+    countdownEl.classList.add('open');
+  }else{
+    countdownEl.textContent = `Opens in ${formatCountdownMs(unlockDate - now)}`;
+    countdownEl.classList.remove('open');
+  }
 }
 
 // create 24 doors
+const initialNow = new Date();
 for(let i=1;i<=24;i++){
   const d = document.createElement('button');
-  d.className = 'door';
+  d.className = 'door locked';
   d.innerHTML = `<span class="door-number">${i}</span><span class="countdown-text" aria-live="polite"></span>`;
   d.dataset.day = i;
   d.style.setProperty('--door-index', i);
   d.addEventListener('click', onDoorClick);
   // use the shared door background from CSS (assets/door.png)
+  setDoorLockState(d, initialNow); // apply locked state before first paint to avoid flicker
   grid.appendChild(d);
 }
 updateDoorLocks();
 setInterval(updateDoorLocks, 1000);
+requestAnimationFrame(() => {
+  document.documentElement.classList.remove('doors-prep');
+});
 
 function onDoorClick(e){
   if(e.currentTarget.classList.contains('locked')){
@@ -175,12 +179,15 @@ function showLockDialog(day){
   if(lockHistory){
     const fact = jazzFacts[(Number(day) - 1) % jazzFacts.length];
     lockHistory.innerHTML = `
-      <p class="fact-eyebrow">You still have to be patient... but did you know?</p>
+      <p class="fact-eyebrow">Did you know?</p>
       <p class="fact-body">${fact}</p>
     `;
   }
   if(lockLead){
-    lockLead.textContent = `You still have to be patient. Day ${day} unlocks at midnight.`;
+    const now = new Date();
+    const unlockDate = getUnlockDate(day, now);
+    const countdown = formatCountdownMs(unlockDate - now);
+    lockLead.textContent = `Day ${day} unlocks at midnight — opens in ${countdown}. Until then, enjoy a Jazz fact.`;
   }
   if(lockDialog){
     lockDialog.classList.remove('hidden');
