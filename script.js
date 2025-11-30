@@ -26,6 +26,32 @@ let currentSignatureSrc = '';
 let isRevealed = false;
 let isScrubbing = false;
 let currentArtist = '';
+const jazzHistoryLines = [
+  'Jazz emerged in New Orleans around 1900, blending African rhythms with European harmonies.',
+  'Ragtime and blues were key ingredients that fed the earliest jazz styles.',
+  'Buddy Bolden is often credited as one of the first great jazz cornetists.',
+  'The Original Dixieland Jass Band made one of the earliest jazz recordings in 1917.',
+  'Louis Armstrong revolutionized improvisation and solo playing in the 1920s.',
+  'Chicago became a major hub for jazz during the Great Migration.',
+  'The Harlem Renaissance helped jazz flourish as both art and social movement.',
+  'Duke Ellington elevated big band writing with sophisticated harmonies and tone colors.',
+  'Kansas City swing emphasized strong rhythms and riff-based arrangements.',
+  'Count Basie’s rhythm section set a new standard for swing feel.',
+  'Bebop exploded in the 1940s with dizzying tempos and complex harmonies.',
+  'Charlie Parker and Dizzy Gillespie were central figures in the bebop revolution.',
+  'Thelonious Monk brought angular melodies and unexpected spaces into jazz.',
+  'Cool jazz of the 1950s favored relaxed tempos and lighter textures.',
+  'West Coast jazz reflected that cooler, more arranged sound.',
+  'Hard bop re-emphasized blues roots and gospel influences.',
+  'Miles Davis constantly reinvented himself, from cool jazz to fusion.',
+  'John Coltrane pushed harmony and spirituality to new frontiers.',
+  'Modal jazz simplified chord changes to open space for exploration.',
+  'Free jazz challenged structure, embracing collective improvisation.',
+  'Fusion in the 1970s blended rock, funk, and electric instruments with jazz.',
+  'Latin jazz fused Afro-Cuban rhythms with improvisational language.',
+  'Neo-bop in the 1980s revived acoustic straight-ahead playing.',
+  'Today, jazz continues to evolve, absorbing hip-hop, electronic, and global sounds.'
+];
 
 function updateSignatureVisibility(){
   // Show signature when artist name exists and front is revealed
@@ -132,7 +158,11 @@ updateDoorLocks();
 setInterval(updateDoorLocks, 1000);
 
 function onDoorClick(e){
-  if(e.currentTarget.classList.contains('locked')) return;
+  if(e.currentTarget.classList.contains('locked')){
+    const historyText = jazzHistoryLines.join(' ');
+    alert(`You have to be pacent...\n\n${historyText}`);
+    return;
+  }
   const day = e.currentTarget.dataset.day;
   openModal(day);
 }
