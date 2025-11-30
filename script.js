@@ -19,6 +19,11 @@ const progressFill = document.getElementById('progressFill');
 const progressHandle = document.getElementById('progressHandle');
 const timeElapsed = document.getElementById('timeElapsed');
 const timeRemaining = document.getElementById('timeRemaining');
+const lockDialog = document.getElementById('lockDialog');
+const lockBackdrop = document.getElementById('lockBackdrop');
+const lockCloseBtn = document.getElementById('lockCloseBtn');
+const lockLead = document.getElementById('lockLead');
+const lockHistory = document.getElementById('lockHistory');
 let currentDay = null;
 let currentBackSrc = '';
 let currentFrontSrc = '';
@@ -26,31 +31,31 @@ let currentSignatureSrc = '';
 let isRevealed = false;
 let isScrubbing = false;
 let currentArtist = '';
-const jazzHistoryLines = [
-  'Jazz emerged in New Orleans around 1900, blending African rhythms with European harmonies.',
-  'Ragtime and blues were key ingredients that fed the earliest jazz styles.',
-  'Buddy Bolden is often credited as one of the first great jazz cornetists.',
-  'The Original Dixieland Jass Band made one of the earliest jazz recordings in 1917.',
-  'Louis Armstrong revolutionized improvisation and solo playing in the 1920s.',
-  'Chicago became a major hub for jazz during the Great Migration.',
-  'The Harlem Renaissance helped jazz flourish as both art and social movement.',
-  'Duke Ellington elevated big band writing with sophisticated harmonies and tone colors.',
-  'Kansas City swing emphasized strong rhythms and riff-based arrangements.',
-  'Count Basie’s rhythm section set a new standard for swing feel.',
-  'Bebop exploded in the 1940s with dizzying tempos and complex harmonies.',
-  'Charlie Parker and Dizzy Gillespie were central figures in the bebop revolution.',
-  'Thelonious Monk brought angular melodies and unexpected spaces into jazz.',
-  'Cool jazz of the 1950s favored relaxed tempos and lighter textures.',
-  'West Coast jazz reflected that cooler, more arranged sound.',
-  'Hard bop re-emphasized blues roots and gospel influences.',
-  'Miles Davis constantly reinvented himself, from cool jazz to fusion.',
-  'John Coltrane pushed harmony and spirituality to new frontiers.',
-  'Modal jazz simplified chord changes to open space for exploration.',
-  'Free jazz challenged structure, embracing collective improvisation.',
-  'Fusion in the 1970s blended rock, funk, and electric instruments with jazz.',
-  'Latin jazz fused Afro-Cuban rhythms with improvisational language.',
-  'Neo-bop in the 1980s revived acoustic straight-ahead playing.',
-  'Today, jazz continues to evolve, absorbing hip-hop, electronic, and global sounds.'
+const jazzFacts = [
+  'Jazz took shape in New Orleans around 1900 when African rhythms met European harmony. Congo Square gatherings kept drumming traditions alive and seeded the groove.',
+  'Ragtime brought the jaunty offbeat, and the blues added tension and storytelling. Together they gave early jazz its snap and soul.',
+  'Cornetist Buddy Bolden was an early folk hero—loud, loose, and fearless. His improvising proved personality could trump the written page.',
+  'In 1917 the Original Dixieland Jass Band cut one of the first jazz records. Soon many players headed to Chicago, where clubs soaked up the new sound.',
+  'Louis Armstrong made the solo the main event. His warm tone and playful scat turned every chorus into a story.',
+  'Duke Ellington raised big-band jazz to a composer’s art. At the Cotton Club he painted with tone colors while keeping the swing alive.',
+  'Kansas City nurtured a gritty, riff-driven swing. Count Basie’s rhythm section perfected the light, buoyant pulse that dancers loved.',
+  'Bebop erupted in the 1940s as a rebellion. Dizzy Gillespie and Charlie Parker pushed lightning tempos and dense harmonies in late-night jam sessions.',
+  'Thelonious Monk used jagged melodies and carefully placed silences. His tunes sound quirky yet glow with deep blues feeling.',
+  'Cool jazz slowed the pace and softened the edges. Miles Davis’s “Birth of the Cool” showed how quiet tones can still hit hard.',
+  'On the West Coast, arranged, airy lines thrived. Gerry Mulligan and Chet Baker personified that clear, relaxed sound.',
+  'Hard bop pulled blues and gospel back to center in the 1950s. Art Blakey and Horace Silver balanced earthy grooves with fiery solos.',
+  'Modal jazz reduced chord changes to open space for melody. Miles Davis’s “Kind of Blue” became the touchstone of that freedom.',
+  'John Coltrane chased urgency and spirit from “Giant Steps” to “A Love Supreme.” His sheets of sound feel like prayer and storm at once.',
+  'Free jazz broke forms and embraced collective improvisation. Ornette Coleman and later Coltrane challenged listeners with radical openness.',
+  'Latin jazz fused Afro-Cuban rhythm with jazz harmony. Bossa nova and samba brought a sway that reshaped club playlists worldwide.',
+  'Jimmy Smith’s Hammond B3 sound defined soul jazz. Churchy chords and blues riffs turned into an endless, joyful party.',
+  'Fusion in the 1970s mixed rock volume, funk grooves, and electronics. Miles Davis’s “Bitches Brew” and Weather Report electrified improvisation.',
+  'The ECM label cultivated a spacious, echoing aesthetic. European voices found an airy, chamber-like home for improvisation.',
+  'Vocal jazz stays central: Ella Fitzgerald’s scat, Sarah Vaughan’s velvet, and Billie Holiday’s storytelling show the voice’s many colors.',
+  'Swing was a social force as much as music. Big bands fueled Lindy Hop and Jitterbug nights in packed dance halls.',
+  'Jazz education moved into universities, from Berklee to North Texas. Ear training, theory, and improvisation became formal coursework.',
+  'European scenes built their own flavors, from Nordic lyricism to French Manouche swing born with Django Reinhardt.',
+  'Today jazz blends with hip-hop, electronic textures, and global grooves. Sampling, looping, and improvising coexist without genre fences.'
 ];
 
 function updateSignatureVisibility(){
@@ -159,13 +164,42 @@ setInterval(updateDoorLocks, 1000);
 
 function onDoorClick(e){
   if(e.currentTarget.classList.contains('locked')){
-    const historyText = jazzHistoryLines.join(' ');
-    alert(`You have to be pacent...\n\n${historyText}`);
+    showLockDialog(e.currentTarget.dataset.day);
     return;
   }
   const day = e.currentTarget.dataset.day;
   openModal(day);
 }
+
+function showLockDialog(day){
+  if(lockHistory){
+    const fact = jazzFacts[(Number(day) - 1) % jazzFacts.length];
+    lockHistory.innerHTML = `
+      <p class="fact-eyebrow">You still have to be patient... but did you know?</p>
+      <p class="fact-body">${fact}</p>
+    `;
+  }
+  if(lockLead){
+    lockLead.textContent = `You still have to be patient. Day ${day} unlocks at midnight.`;
+  }
+  if(lockDialog){
+    lockDialog.classList.remove('hidden');
+    lockDialog.setAttribute('aria-hidden','false');
+  }
+}
+function closeLockDialog(){
+  if(lockDialog){
+    lockDialog.classList.add('hidden');
+    lockDialog.setAttribute('aria-hidden','true');
+  }
+}
+if(lockBackdrop) lockBackdrop.addEventListener('click', closeLockDialog);
+if(lockCloseBtn) lockCloseBtn.addEventListener('click', closeLockDialog);
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape' && lockDialog && !lockDialog.classList.contains('hidden')){
+    closeLockDialog();
+  }
+});
 
 function formatTime(value, fallback = '--:--'){
   if(!isFinite(value) || value < 0) return fallback;

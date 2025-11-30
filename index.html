@@ -53,6 +53,16 @@
       <source src="assets/music/song-1.mp3" type="audio/mpeg">
     </audio>
 
+    <div id="lockDialog" class="lock-dialog hidden" aria-hidden="true">
+      <div id="lockBackdrop" class="lock-backdrop"></div>
+      <div class="lock-content">
+        <button id="lockCloseBtn" class="close">✕</button>
+        <h2 class="lock-title">Locked Door</h2>
+        <p id="lockLead" class="lock-lead">You still have to be patient before this door opens.</p>
+        <div class="lock-history" id="lockHistory" aria-label="24 short facts from jazz history"></div>
+      </div>
+    </div>
+
     <script src="script.js"></script>
   </body>
 </html>
