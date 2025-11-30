@@ -77,19 +77,62 @@ const dayMeta = {
   24: { artist: 'Diane Reeves' },
 };
 
+const CALENDAR_MONTH = 11; // December (0-indexed)
+const calendarYear = new Date().getFullYear(); // Adjust if you want a specific year
+
+function getUnlockDate(day, nowRef = new Date()){
+  // Doors open at local midnight for each December day
+  const year = nowRef.getMonth() === CALENDAR_MONTH ? nowRef.getFullYear() : calendarYear;
+  return new Date(year, CALENDAR_MONTH, Number(day), 0, 0, 0, 0);
+}
+
+function formatCountdownMs(diffMs){
+  const totalSec = Math.max(0, Math.floor(diffMs / 1000));
+  const days = Math.floor(totalSec / 86400);
+  const hours = Math.floor((totalSec % 86400) / 3600);
+  const mins = Math.floor((totalSec % 3600) / 60);
+  const secs = totalSec % 60;
+  if(days > 0) return `${days}d ${hours}h`;
+  if(hours > 0) return `${hours}h ${mins}m`;
+  return `${mins}m ${secs}s`;
+}
+
+function updateDoorLocks(){
+  const now = new Date();
+  document.querySelectorAll('.door').forEach(door => {
+    const day = Number(door.dataset.day);
+    const countdownEl = door.querySelector('.countdown-text');
+    const unlockDate = getUnlockDate(day, now);
+    const isUnlocked = now >= unlockDate;
+    door.classList.toggle('locked', !isUnlocked);
+    door.setAttribute('aria-disabled', String(!isUnlocked));
+    if(!countdownEl) return;
+    if(isUnlocked){
+      countdownEl.textContent = 'Jetzt offen';
+      countdownEl.classList.add('open');
+    }else{
+      countdownEl.textContent = `Noch ${formatCountdownMs(unlockDate - now)}`;
+      countdownEl.classList.remove('open');
+    }
+  });
+}
+
 // create 24 doors
 for(let i=1;i<=24;i++){
   const d = document.createElement('button');
   d.className = 'door';
-  d.innerHTML = `<span class="door-number">${i}</span>`;
+  d.innerHTML = `<span class="door-number">${i}</span><span class="countdown-text" aria-live="polite"></span>`;
   d.dataset.day = i;
   d.style.setProperty('--door-index', i);
   d.addEventListener('click', onDoorClick);
   // use the shared door background from CSS (assets/door.png)
   grid.appendChild(d);
 }
+updateDoorLocks();
+setInterval(updateDoorLocks, 1000);
 
 function onDoorClick(e){
+  if(e.currentTarget.classList.contains('locked')) return;
   const day = e.currentTarget.dataset.day;
   openModal(day);
 }
