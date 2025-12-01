@@ -7,12 +7,12 @@
   "theme_color": "#111111",
   "icons": [
     {
-      "src": "https://iosdevmk.github.io/advent-jazz/assets/icons/favicon.png",
+      "src": "assets/icons/favicon.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "https://iosdevmk.github.io/advent-jazz/assets/icons/favicon.png",
+      "src": "assets/icons/favicon.png",
       "sizes": "192x192",
       "type": "image/png"
     }
