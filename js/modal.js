@@ -111,6 +111,29 @@ export function openModal(
   skipRevealBtn.classList.remove('revealed');
   skipRevealBtn.setAttribute('aria-label', 'Reveal singer');
   
+  // Prepare image BEFORE animation starts
+  const dayImg = document.getElementById('dayImg');
+  const backJpg = `assets/images/day-${day}-back.jpg`;
+  const backPng = `assets/images/day-${day}-back.png`;
+  const backSvg = `assets/images/day-${day}-back.svg`;
+  currentBackSrc = backSvg;
+  
+  // Set image to hidden initially
+  dayImg.style.opacity = '0';
+  dayImg.alt = `Day ${day}`;
+  
+  // Start loading the image asynchronously
+  (async () => {
+    try {
+      let r = await fetch(backJpg, { method: 'HEAD' });
+      if (r.ok) { dayImg.src = backJpg; currentBackSrc = backJpg; return; }
+      r = await fetch(backPng, { method: 'HEAD' });
+      if (r.ok) { dayImg.src = backPng; currentBackSrc = backPng; return; }
+      dayImg.src = backSvg;
+      currentBackSrc = backSvg;
+    } catch (e) { dayImg.src = backSvg; currentBackSrc = backSvg; }
+  })();
+  
   // animate a clone of the clicked door into the modal zoom frame
   const door = document.querySelector(`.door[data-day="${day}"]`);
   const rect = door.getBoundingClientRect();
@@ -149,25 +172,25 @@ export function openModal(
   // After animation completes, remove clone and show actual images
   clone.addEventListener('transitionend', () => {
     clone.remove();
-    // Ensure the image starts hidden, then fades in
-    const img = document.getElementById('dayImg');
-    if (img) { img.style.opacity = '0'; }
     // trigger polished enter animation on the zoom frame image
     const ENTER_MODE = 'vertical'; // 'horizontal' or 'vertical'
     zoomFrame.classList.add('entering');
     zoomFrame.classList.toggle('horizontal', ENTER_MODE === 'horizontal');
     zoomFrame.classList.toggle('vertical', ENTER_MODE === 'vertical');
-    zoomFrame.querySelectorAll('img').forEach(i => i.style.opacity = '1');
+    
+    // Fade in image after a brief delay to ensure it's loaded
+    setTimeout(() => {
+      dayImg.style.opacity = '1';
+    }, 50);
+    
     // remove the class after the animation ends
-    if (img) {
-      img.addEventListener('animationend', () => {
-        zoomFrame.classList.remove('entering');
-        zoomFrame.classList.remove('horizontal');
-        zoomFrame.classList.remove('vertical');
-        // leave the image visible after animation completes
-        img.style.opacity = '1';
-      }, { once: true });
-    }
+    dayImg.addEventListener('animationend', () => {
+      zoomFrame.classList.remove('entering');
+      zoomFrame.classList.remove('horizontal');
+      zoomFrame.classList.remove('vertical');
+      // leave the image visible after animation completes
+      dayImg.style.opacity = '1';
+    }, { once: true });
   }, { once: true });
 
   // set assets for day (use placeholder pattern)
@@ -191,26 +214,6 @@ export function openModal(
   currentArtist = meta && meta.artist ? meta.artist : '';
   if (currentArtist) { artistLabel.textContent = currentArtist; }
   artistOverlay.classList.add('hidden');
-
-  // set day back image inline; prefer JPG then PNG then SVG
-  const dayImg = document.getElementById('dayImg');
-  const backJpg = `assets/images/day-${day}-back.jpg`;
-  const backPng = `assets/images/day-${day}-back.png`;
-  const backSvg = `assets/images/day-${day}-back.svg`;
-  currentBackSrc = backSvg;
-  
-  (async () => {
-    try {
-      let r = await fetch(backJpg, { method: 'HEAD' });
-      if (r.ok) { dayImg.src = backJpg; currentBackSrc = backJpg; return; }
-      r = await fetch(backPng, { method: 'HEAD' });
-      if (r.ok) { dayImg.src = backPng; currentBackSrc = backPng; return; }
-      dayImg.src = backSvg;
-      currentBackSrc = backSvg;
-    } catch (e) { dayImg.src = backSvg; currentBackSrc = backSvg; }
-  })();
-  
-  dayImg.alt = `Day ${day}`;
 
   audioEl.oncanplay = () => { 
     updateProgress(audioEl, progressFill, progressHandle, timeElapsed, timeRemaining); 
