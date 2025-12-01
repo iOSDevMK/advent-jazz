@@ -28,10 +28,8 @@ const musicToggle = document.getElementById('musicToggle');
 const factAudioBtn = document.getElementById('factAudioBtn');
 const bgMusic = document.getElementById('bgMusic');
 const factAudio = document.getElementById('factAudio');
-const bgTracks = [
-  'assets/music/song-1.mp3',
-  'assets/music/song-2.mp3',
-];
+let bgTracks = [];
+const MAX_BG_TRACKS = 12;
 const FACT_AUDIO_MAX = 24; // available jazz fact audio files
 const BG_VOL_NORMAL = 0.08;
 const BG_VOL_DAY_DUCK = 0.02;
@@ -50,6 +48,13 @@ let bgMusicEnabled = true;
 let isFactAudioPlaying = false;
 let factAudioReady = false;
 let currentBgTrack = -1;
+function initBgTracks(){
+  bgTracks = [];
+  for(let i=1;i<=MAX_BG_TRACKS;i++){
+    bgTracks.push(`assets/music/song-${i}.mp3`);
+  }
+}
+initBgTracks();
 const jazzFacts = [
   'Jazz took shape in New Orleans around 1900 when African rhythms met European harmony. Congo Square gatherings kept drumming traditions alive. The port city’s brass bands added parade energy. Early improvisers blurred written and oral traditions. That mix seeded the groove we now call Jazz.',
   'Ragtime brought a jaunty offbeat and syncopated sparkle. The blues added tension, release, and direct storytelling. Together they gave early Jazz its snap and soul. Piano rolls spread the style across the country. Dancers and saloons demanded that feel every night.',
@@ -268,7 +273,7 @@ if(musicToggle){
 }
 
 function pickNextBgTrack(randomize = true){
-  if(bgTracks.length === 0) return null;
+  if(!bgTracks || bgTracks.length === 0) return null;
   if(bgTracks.length === 1) return 0;
   if(!randomize){
     return (currentBgTrack + 1) % bgTracks.length;
@@ -706,6 +711,11 @@ if(bgMusic){
     document.addEventListener('keydown', playBg);
   });
   bgMusic.addEventListener('ended', () => {
+    setBgTrack(pickNextBgTrack(true));
+    applyBgMusicState(false);
+    bgMusic.play().catch(()=>{});
+  });
+  bgMusic.addEventListener('error', () => {
     setBgTrack(pickNextBgTrack(true));
     applyBgMusicState(false);
     bgMusic.play().catch(()=>{});
