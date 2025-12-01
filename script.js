@@ -26,6 +26,8 @@ const lockLead = document.getElementById('lockLead');
 const lockHistory = document.getElementById('lockHistory');
 const musicToggle = document.getElementById('musicToggle');
 const factAudioBtn = document.getElementById('factAudioBtn');
+const musicPrev = document.getElementById('musicPrev');
+const musicNext = document.getElementById('musicNext');
 const bgMusic = document.getElementById('bgMusic');
 const factAudio = document.getElementById('factAudio');
 let bgTracks = [];
@@ -250,7 +252,10 @@ function applyBgMusicState(isDayPlaying){
 }
 function updateMusicToggleLabel(){
   if(!musicToggle) return;
-  musicToggle.textContent = bgMusicEnabled ? 'Turn music off' : 'Turn music on';
+  const isPlaying = bgMusicEnabled && bgMusic && !bgMusic.paused && !bgMusic.ended;
+  const playPause = isPlaying ? '❚❚' : '▶';
+  const ppEl = musicToggle.querySelector('.music-playpause');
+  if(ppEl) ppEl.textContent = playPause;
   musicToggle.setAttribute('aria-pressed', String(bgMusicEnabled));
 }
 function toggleBgMusic(){
@@ -270,6 +275,24 @@ function toggleBgMusic(){
 }
 if(musicToggle){
   musicToggle.addEventListener('click', toggleBgMusic);
+}
+function skipBgTrack(dir){
+  if(!bgMusic || !bgTracks || bgTracks.length === 0) return;
+  const len = bgTracks.length;
+  const current = currentBgTrack >= 0 ? currentBgTrack : 0;
+  const next = (current + dir + len) % len;
+  setBgTrack(next);
+  if(bgMusicEnabled){
+    bgMusic.play().catch(()=>{});
+    applyBgMusicState(false);
+  }
+  updateMusicToggleLabel();
+}
+if(musicPrev){
+  musicPrev.addEventListener('click', () => skipBgTrack(-1));
+}
+if(musicNext){
+  musicNext.addEventListener('click', () => skipBgTrack(1));
 }
 
 function pickNextBgTrack(randomize = true){
@@ -720,5 +743,9 @@ if(bgMusic){
     applyBgMusicState(false);
     bgMusic.play().catch(()=>{});
   });
+  bgMusic.addEventListener('play', updateMusicToggleLabel);
+  bgMusic.addEventListener('pause', updateMusicToggleLabel);
+  bgMusic.addEventListener('ended', updateMusicToggleLabel);
+  bgMusic.addEventListener('error', updateMusicToggleLabel);
 }
 updateMusicToggleLabel();

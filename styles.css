@@ -59,35 +59,54 @@ h1{
   letter-spacing:0.02em;
   color:var(--accent-2);
 }
-.music-toggle{
+.music-controls{
   position:fixed;
   top:18px;
   right:18px;
   z-index:1200;
-  background:rgba(0,0,0,0.7);
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 10px;
+  background:rgba(0,0,0,0.55);
+  border:1px solid rgba(212,175,55,0.35);
+  border-radius:999px;
+  box-shadow:0 14px 30px rgba(0,0,0,0.4);
+}
+.music-toggle{
+  position:relative;
+  background:transparent;
   color:var(--accent-2);
-  border:1px solid rgba(212,175,55,0.4);
-  padding:10px 14px;
+  border:none;
+  padding:8px 10px;
   border-radius:999px;
   cursor:pointer;
   font-weight:700;
   letter-spacing:0.01em;
-  box-shadow:0 12px 32px rgba(0,0,0,0.45);
   display:inline-flex;
   align-items:center;
-  gap:8px;
+  gap:6px;
 }
-.music-toggle::before{
-  content:"";
-  width:16px;
-  height:16px;
-  display:block;
-  background:currentColor;
-  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 24 24'%3E%3Cpath d='M19 3v13.56a3.75 3.75 0 1 1-1.5-3V8.25H10V16a3.75 3.75 0 1 1-1.5-3V5h10.5z'/%3E%3C/svg%3E") center/contain no-repeat;
-          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 24 24'%3E%3Cpath d='M19 3v13.56a3.75 3.75 0 1 1-1.5-3V8.25H10V16a3.75 3.75 0 1 1-1.5-3V5h10.5z'/%3E%3C/svg%3E") center/contain no-repeat;
+.music-note{font-weight:800;font-size:18px;line-height:1;}
+.music-playpause{font-size:18px;font-weight:800;}
+.music-toggle:hover{color:var(--accent)}
+.music-toggle:focus-visible{outline:2px solid var(--accent-2);outline-offset:4px}
+.music-skip{
+  background:transparent;
+  color:var(--accent-2);
+  border:none;
+  padding:10px;
+  border-radius:50%;
+  cursor:pointer;
+  font-weight:700;
+  min-width:46px;
+  height:46px;
+  display:grid;
+  place-items:center;
 }
-.music-toggle:hover{background:rgba(0,0,0,0.85)}
-.music-toggle:focus-visible{outline:2px solid var(--accent-2);outline-offset:3px}
+.music-skip span{font-size:20px;line-height:1;}
+.music-skip:hover{color:var(--accent)}
+.music-skip:focus-visible{outline:2px solid var(--accent-2);outline-offset:4px}
 .brand-link{
   position:fixed;
   top:18px;
