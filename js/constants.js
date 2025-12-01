@@ -1,9 +1,9 @@
 // Constants and configuration
 export const MAX_BG_TRACKS = 12;
 export const FACT_AUDIO_MAX = 24;
-export const BG_VOL_NORMAL = 0.08;
-export const BG_VOL_DAY_DUCK = 0.02;
-export const BG_VOL_FACT_DUCK = 0.01;
+export const BG_VOL_NORMAL = 0.05;
+export const BG_VOL_DAY_DUCK = 0.015;
+export const BG_VOL_FACT_DUCK = 0.007;
 export const DEBUG_OPEN = new URLSearchParams(location.search).has('debug');
 export const IS_LOCALHOST = ['localhost','127.0.0.1','::1'].includes(location.hostname);
 export const DEV_OPEN = IS_LOCALHOST && DEBUG_OPEN;

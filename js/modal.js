@@ -208,7 +208,10 @@ export function openModal(
   progressHandle.style.left = '0%';
   timeElapsed.textContent = '0:00';
   timeRemaining.textContent = '--:--';
+  // Disable reveal at start; script.js will re-enable after 50% playback
   skipRevealBtn.classList.remove('ready');
+  skipRevealBtn.disabled = true;
+  skipRevealBtn.setAttribute('aria-label', 'Reveal locked until 50%');
   riddleText.innerHTML = `<span class="day-number">Day ${day}</span>  —  tap Play to start the audio.`;
   const meta = dayMeta[Number(day)];
   currentArtist = meta && meta.artist ? meta.artist : '';

@@ -70,6 +70,18 @@ const signatureText = document.getElementById('signatureText');
 // Initialize background music tracks
 initBgTracks();
 
+// Reveal eligibility: enable eye button after 50% playback
+function updateRevealEligibility() {
+  if (!skipRevealBtn || !audioEl) return;
+  const dur = audioEl.duration;
+  const cur = audioEl.currentTime;
+  const ready = isFinite(dur) && dur > 0 && cur >= dur * 0.5;
+  skipRevealBtn.disabled = !ready;
+  skipRevealBtn.classList.toggle('ready', ready);
+  const label = ready ? (skipRevealBtn.classList.contains('revealed') ? 'Hide singer' : 'Reveal singer') : 'Reveal locked until 50%';
+  skipRevealBtn.setAttribute('aria-label', label);
+}
+
 // Door click handler
 function onDoorClick(e) {
   if (!DEV_OPEN && e.currentTarget.classList.contains('locked')) {
@@ -150,23 +162,35 @@ playPauseBtn.addEventListener('click', () => {
     audioEl.pause();
     setPlayButtonState(playPauseBtn, 'play');
   }
+  updateRevealEligibility();
 });
 
-audioEl.addEventListener('timeupdate', () => updateProgress(audioEl, progressFill, progressHandle, timeElapsed, timeRemaining));
-audioEl.addEventListener('loadedmetadata', () => updateProgress(audioEl, progressFill, progressHandle, timeElapsed, timeRemaining));
+audioEl.addEventListener('timeupdate', () => { 
+  updateProgress(audioEl, progressFill, progressHandle, timeElapsed, timeRemaining);
+  updateRevealEligibility();
+});
+audioEl.addEventListener('loadedmetadata', () => { 
+  updateProgress(audioEl, progressFill, progressHandle, timeElapsed, timeRemaining);
+  updateRevealEligibility();
+});
 audioEl.addEventListener('play', () => { 
   setPlayButtonState(playPauseBtn, 'pause');
   applyBgMusicState(bgMusic, true);
+  updateRevealEligibility();
 });
 audioEl.addEventListener('pause', () => {
   setPlayButtonState(playPauseBtn, 'play');
   applyBgMusicState(bgMusic, false);
+  updateRevealEligibility();
 });
 audioEl.addEventListener('ended', () => {
   applyBgMusicState(bgMusic, false);
+  // At end, allow reveal if not yet allowed
+  updateRevealEligibility();
 });
 
 skipRevealBtn.addEventListener('click', () => {
+  if (skipRevealBtn.disabled) return;
   toggleReveal(
     skipRevealBtn,
     playPauseBtn,
@@ -175,6 +199,7 @@ skipRevealBtn.addEventListener('click', () => {
     signatureText,
     audioEl
   );
+  updateRevealEligibility();
 });
 
 progressTrack.addEventListener('pointerdown', (e) => startScrub(audioEl, progressTrack, e));
