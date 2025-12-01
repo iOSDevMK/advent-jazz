@@ -1,0 +1,22 @@
+{
+  "name": "Jazz Riddles Advent Calendar",
+  "short_name": "Jazz Advent",
+  "start_url": "https://iosdevmk.github.io/advent-jazz/",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "https://iosdevmk.github.io/advent-jazz/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://iosdevmk.github.io/advent-jazz/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
