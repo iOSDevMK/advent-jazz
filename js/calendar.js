@@ -18,7 +18,8 @@ export function formatCountdownMs(diffMs) {
 
 export function updateDoorLocks() {
   const now = new Date();
-  document.querySelectorAll('.door').forEach(door => setDoorLockState(door, now));
+  const doors = Array.from(document.querySelectorAll('.door'));
+  doors.forEach(door => setDoorLockState(door, now));
 }
 
 export function setDoorLockState(door, now) {
@@ -50,4 +51,74 @@ export function createDoors(grid, onDoorClick) {
     setDoorLockState(d, initialNow);
     grid.appendChild(d);
   }
+  // Initialize snowfall layer
+  ensureSnowLayer();
+}
+
+export function ensureSnowLayer(){
+  // Use a global body-level overlay so it can sit above all UI
+  let snow = document.querySelector('.snow-layer');
+  if(!snow){
+    snow = document.createElement('div');
+    snow.className = 'snow-layer';
+    document.body.appendChild(snow);
+  }
+}
+
+export function toggleSnowfall(active){
+  ensureSnowLayer();
+  const snow = document.querySelector('.snow-layer');
+  if(!snow) return;
+  snow.classList.toggle('active', !!active);
+  if(active && snow.childElementCount === 0){
+    // Use a single snowflake-area with many flakes per provided script
+    const area = document.createElement('div');
+    area.className = 'snowflake-area';
+    snow.appendChild(area);
+    const count = getSnowflakeCount();
+    for(let i=0;i<count;i++){
+      const snowflake = document.createElement('div');
+      snowflake.classList.add('snowflake');
+
+      const randomSize = Math.random() * 4 + 1;
+      const randomDuration = Math.random() * 11 + 4;
+      const randomXPosition = Math.random() * 100;
+      const randomDelay = Math.random() * 6;
+      const randomOpacity = Math.random() * 0.2 + 0.4;
+
+      snowflake.style.left = `${randomXPosition}%`;
+      snowflake.style.animationDuration = `${randomDuration}s`;
+      snowflake.style.width = `${randomSize}px`;
+      snowflake.style.animationDelay = `${randomDelay}s`;
+      snowflake.style.opacity = `${randomOpacity}`;
+
+      area.appendChild(snowflake);
+    }
+  }
+  if(!active){
+    // clear flakes when not active to reduce DOM
+    snow.innerHTML = '';
+  }
+}
+
+function getSnowflakeCount(){
+  const width = window.innerWidth || window.screen.width;
+  const height = window.innerHeight || window.screen.height;
+  const area = Math.max(1, (width * height));
+  // Base density tuned for performance
+  let base;
+  if(width < 480){
+    base = 180;
+  } else if(width < 768){
+    base = 260;
+  } else if(width < 1024){
+    base = 340;
+  } else {
+    base = 420;
+  }
+  // Adjust slightly by screen area
+  const scaled = Math.min(600, Math.round(base * Math.min(1.4, area / (1280*800))));
+  // Respect reduced motion
+  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return prefersReduced ? Math.floor(scaled * 0.4) : scaled;
 }

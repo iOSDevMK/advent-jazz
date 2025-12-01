@@ -15,7 +15,9 @@ import {
 } from './js/facts.js';
 import { 
   updateDoorLocks, 
-  createDoors 
+  createDoors,
+  ensureSnowLayer,
+  toggleSnowfall 
 } from './js/calendar.js';
 import { 
   setPlayButtonState, 
@@ -63,6 +65,7 @@ const musicToggle = document.getElementById('musicToggle');
 const factAudioBtn = document.getElementById('factAudioBtn');
 const musicPrev = document.getElementById('musicPrev');
 const musicNext = document.getElementById('musicNext');
+const snowToggle = document.getElementById('snowToggle');
 const bgMusic = document.getElementById('bgMusic');
 const factAudio = document.getElementById('factAudio');
 const signatureText = document.getElementById('signatureText');
@@ -89,6 +92,8 @@ function onDoorClick(e) {
     return;
   }
   const day = e.currentTarget.dataset.day;
+  // Stop snowfall when opening modal
+  toggleSnowfall(false);
   openModal(
     day,
     modal,
@@ -114,6 +119,12 @@ function onDoorClick(e) {
 createDoors(grid, onDoorClick);
 updateDoorLocks();
 setInterval(updateDoorLocks, 1000);
+// Snowfall toggle with persisted state
+ensureSnowLayer();
+const snowPref = localStorage.getItem('snow-enabled');
+let snowEnabled = snowPref === null ? true : snowPref === 'true';
+toggleSnowfall(snowEnabled);
+if(snowToggle){ snowToggle.setAttribute('aria-pressed', String(!!snowEnabled)); }
 
 // Lock dialog event listeners
 setupLockDialogEventListeners(lockDialog, lockBackdrop, lockCloseBtn, factAudio);
@@ -148,9 +159,21 @@ if (musicNext) {
   });
 }
 
+// Snow toggle
+if(snowToggle){
+  snowToggle.addEventListener('click', () => {
+    snowEnabled = !snowEnabled;
+    localStorage.setItem('snow-enabled', String(snowEnabled));
+    snowToggle.setAttribute('aria-pressed', String(!!snowEnabled));
+    // Only show snow when modal is closed
+    const isModalHidden = modal.classList.contains('hidden');
+    toggleSnowfall(snowEnabled && isModalHidden);
+  });
+}
+
 // Modal controls
-backdrop.addEventListener('click', () => closeModal(modal, audioEl, bgMusic));
-closeBtn.addEventListener('click', () => closeModal(modal, audioEl, bgMusic));
+backdrop.addEventListener('click', () => { closeModal(modal, audioEl, bgMusic); toggleSnowfall(true); });
+closeBtn.addEventListener('click', () => { closeModal(modal, audioEl, bgMusic); toggleSnowfall(true); });
 
 playPauseBtn.addEventListener('click', () => {
   if (audioEl.paused) {

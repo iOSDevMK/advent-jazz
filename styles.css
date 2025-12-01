@@ -51,6 +51,36 @@ body::before{
   background:rgba(10,10,12,0.72);
   box-shadow:0 20px 60px rgba(0,0,0,0.65);
 }
+/* Global snow overlay above all UI */
+/* Layered, 3D-like snowfall */
+.snow-layer{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:100000; /* ensure above title, labels, and toasts */
+  opacity:0;
+  transition:opacity .3s ease;
+}
+.snow-layer.active{ opacity:1; }
+.snowflake-area{ position:relative; width:100%; height:100%; }
+.snowflake{
+  position:absolute;
+  top:-20%;
+  aspect-ratio:1;
+  border-radius:50%;
+  background-color:snow;
+  animation:snowfall 10s linear infinite;
+}
+@keyframes snowfall{
+  0%{ transform: translateY(0) rotate(0); }
+  100%{ transform: translateY(120vh) rotate(360deg); }
+}
+/* Optional sway; apply as a second animation only if using CSS variables to compose transforms */
+@keyframes sway{
+  0%,100%{ transform: translateX(calc(-1 * var(--sway-amplitude))); }
+  50%{ transform: translateX(var(--sway-amplitude)); }
+}
 h1{
   font-family:'Playfair Display', 'Times New Roman', serif;
   text-align:center;
@@ -107,6 +137,8 @@ h1{
 .music-skip span{font-size:20px;line-height:1;}
 .music-skip:hover{color:var(--accent)}
 .music-skip:focus-visible{outline:2px solid var(--accent-2);outline-offset:4px}
+/* Snow toggle active state */
+#snowToggle[aria-pressed="true"]{ color:#b7f5cf; }
 .brand-link{
   position:fixed;
   top:18px;
@@ -777,6 +809,8 @@ h1{
 
 @media (prefers-reduced-motion: reduce){
   *{animation:none!important;transition:none!important}
+  /* Keep gentle snowfall animation even with reduced motion */
+  .snowflake{animation:snow-fall linear infinite !important}
 }
 
 @media (max-width:800px){
