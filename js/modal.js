@@ -23,7 +23,7 @@ export function getCurrentBackSrc() {
 
 export function updateSignatureVisibility(signatureOverlay, signatureText) {
   // Show signature when artist name exists and front is revealed
-  const showSignature = currentArtist && isRevealed;
+  const showSignature = currentArtist && isRevealed && window.lastQuizCorrect === true;
   if (showSignature) {
     signatureText.textContent = currentArtist;
     signatureOverlay.classList.remove('hidden');
@@ -110,6 +110,13 @@ export function openModal(
   isRevealed = false;
   skipRevealBtn.classList.remove('revealed');
   skipRevealBtn.setAttribute('aria-label', 'Reveal singer');
+  // Reset last quiz correctness; signature only shows on correct answer
+  window.lastQuizCorrect = undefined;
+  // Ensure any previous reveal mark is removed so it never shows on the back image
+  if (zoomFrame) {
+    const oldMark = zoomFrame.querySelector('.reveal-mark');
+    if (oldMark) oldMark.remove();
+  }
   
   // Store current day on audio element for quiz trigger
   audioEl.dataset.currentDay = day;
@@ -216,7 +223,8 @@ export function openModal(
   skipRevealBtn.setAttribute('aria-label', 'Reveal locked until 50%');
   riddleText.innerHTML = `<span class="day-number">Day ${day}</span>  —  tap Play to start the audio.`;
   const meta = dayMeta[Number(day)];
-  currentArtist = meta && meta.artist ? meta.artist : '';
+  // Use singer field from metadata for signature name
+  currentArtist = meta && meta.singer ? meta.singer : '';
   if (currentArtist) { artistLabel.textContent = currentArtist; }
   artistOverlay.classList.add('hidden');
 
@@ -228,6 +236,7 @@ export function openModal(
     setPlayButtonState(playPauseBtn, 'play');
     skipRevealBtn.classList.add('ready');
     updateProgress(audioEl, progressFill, progressHandle, timeElapsed, timeRemaining);
+    // Do not recreate reveal mark here; quiz must be answered first
   };
 }
 
