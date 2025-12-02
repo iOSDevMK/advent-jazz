@@ -82,7 +82,6 @@ function updateRevealEligibility() {
   const dur = audioEl.duration;
   const cur = audioEl.currentTime;
   const ready = isFinite(dur) && dur > 0 && cur >= dur * 0.5;
-  skipRevealBtn.disabled = !ready;
   skipRevealBtn.classList.toggle('ready', ready);
   const label = ready ? (skipRevealBtn.classList.contains('revealed') ? 'Hide singer' : 'Reveal singer') : 'Reveal locked until 50%';
   skipRevealBtn.setAttribute('aria-label', label);
@@ -239,7 +238,12 @@ document.addEventListener('quiz-answered', (e) => {
 });
 
 skipRevealBtn.addEventListener('click', () => {
-  if (skipRevealBtn.disabled) return;
+  // Show feedback if not ready yet
+  if (!skipRevealBtn.classList.contains('ready')) {
+    showToast('Listen to at least 50% before revealing!');
+    return;
+  }
+  
   // Always open quiz to allow repeat attempts; show back image alongside quiz
   const day = audioEl.dataset.currentDay;
   if(day){
@@ -247,6 +251,21 @@ skipRevealBtn.addEventListener('click', () => {
     openRiddleDialog(day);
   }
 });
+
+// Simple toast notification helper
+function showToast(message) {
+  let toast = document.querySelector('.toast-banner');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.className = 'toast-banner';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.classList.remove('fade-out');
+  setTimeout(() => {
+    toast.classList.add('fade-out');
+  }, 2200);
+}
 
 progressTrack.addEventListener('pointerdown', (e) => startScrub(audioEl, progressTrack, e));
 progressHandle.addEventListener('pointerdown', (e) => {

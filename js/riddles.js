@@ -60,6 +60,12 @@ export function openRiddleDialog(day) {
       if(quizAnswered) return;
       quizAnswered = true;
       const isCorrect = name === correct;
+      
+      // Play sound
+      const sfx = new Audio(isCorrect ? 'assets/audio/yes.mp3' : 'assets/audio/no.mp3');
+      sfx.volume = 0.4;
+      sfx.play().catch(() => {});
+      
       // Close quiz and trigger reveal immediately
       overlay.classList.add('hidden');
       document.dispatchEvent(new CustomEvent('quiz-answered', { detail: { correct: isCorrect, day } }));

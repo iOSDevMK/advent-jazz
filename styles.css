@@ -91,13 +91,13 @@ h1{
 }
 .music-controls{
   position:fixed;
-  top:38px;
+  top:20px;
   right:18px;
   z-index:1200;
   display:inline-flex;
   align-items:center;
   gap:6px;
-  padding:6px 10px;
+  padding:4px 8px;
   background:rgba(0,0,0,0.55);
   border:1px solid rgba(212,175,55,0.35);
   border-radius:999px;
@@ -108,7 +108,7 @@ h1{
   background:transparent;
   color:var(--accent-2);
   border:none;
-  padding:8px 10px;
+  padding:6px 8px;
   border-radius:999px;
   cursor:pointer;
   font-weight:700;
@@ -125,12 +125,12 @@ h1{
   background:transparent;
   color:var(--accent-2);
   border:none;
-  padding:10px;
+  padding:6px;
   border-radius:50%;
   cursor:pointer;
   font-weight:700;
-  min-width:46px;
-  height:46px;
+  min-width:36px;
+  height:36px;
   display:grid;
   place-items:center;
 }

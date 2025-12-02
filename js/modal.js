@@ -213,7 +213,6 @@ export function openModal(
   timeRemaining.textContent = '--:--';
   // Disable reveal at start; script.js will re-enable after 50% playback
   skipRevealBtn.classList.remove('ready');
-  skipRevealBtn.disabled = true;
   skipRevealBtn.setAttribute('aria-label', 'Reveal locked until 50%');
   riddleText.innerHTML = `<span class="day-number">Day ${day}</span>  —  tap Play to start the audio.`;
   const meta = dayMeta[Number(day)];
@@ -274,8 +273,7 @@ export function toggleReveal(
       // Determine if correct (if no quiz was taken, assume correct for direct reveal)
       const isCorrect = window.lastQuizCorrect !== false;
       mark.className = 'reveal-mark ' + (isCorrect ? 'success' : 'fail');
-
-      // Play yes/no sound on reveal
+      
       // Play sfx after flip completes (~400ms)
       setTimeout(() => {
         try {
@@ -301,11 +299,9 @@ export function toggleReveal(
     const zoomFrame = document.getElementById('zoomFrame');
     const mark = zoomFrame && zoomFrame.querySelector('.reveal-mark');
     if (mark) {
-      // Prefer removing to guarantee it doesn't overlay the back side
       mark.remove();
     }
   }
-  skipRevealBtn.classList.add('ready');
   setPlayButtonState(playPauseBtn, 'play');
 }
 
@@ -338,6 +334,7 @@ export function revealFront(
     }
     const isCorrect = window.lastQuizCorrect !== false;
     mark.className = 'reveal-mark ' + (isCorrect ? 'success' : 'fail');
+    
     // Play sfx after flip completes (~400ms)
     setTimeout(() => {
       try {
@@ -347,7 +344,6 @@ export function revealFront(
       } catch (_) {}
     }, 450);
   });
-  skipRevealBtn.classList.add('ready');
   setPlayButtonState(playPauseBtn, 'play');
 }
 
