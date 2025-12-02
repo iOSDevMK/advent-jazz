@@ -111,6 +111,9 @@ export function openModal(
   skipRevealBtn.classList.remove('revealed');
   skipRevealBtn.setAttribute('aria-label', 'Reveal singer');
   
+  // Store current day on audio element for quiz trigger
+  audioEl.dataset.currentDay = day;
+  
   // Prepare image BEFORE animation starts
   const dayImg = document.getElementById('dayImg');
   const backJpg = `assets/images/day-${day}-back.jpg`;
@@ -259,6 +262,28 @@ export function toggleReveal(
       skipRevealBtn.setAttribute('aria-label', 'Hide singer');
       artistOverlay.classList.add('hidden');
       updateSignatureVisibility(signatureOverlay, signatureText);
+      
+      // Always show correct/incorrect mark based on quiz result
+      const zoomFrame = document.getElementById('zoomFrame');
+      let mark = zoomFrame.querySelector('.reveal-mark');
+      if(!mark){
+        mark = document.createElement('div');
+        mark.className = 'reveal-mark';
+        zoomFrame.appendChild(mark);
+      }
+      // Determine if correct (if no quiz was taken, assume correct for direct reveal)
+      const isCorrect = window.lastQuizCorrect !== false;
+      mark.className = 'reveal-mark ' + (isCorrect ? 'success' : 'fail');
+
+      // Play yes/no sound on reveal
+      // Play sfx after flip completes (~400ms)
+      setTimeout(() => {
+        try {
+          const sfx = new Audio(isCorrect ? 'assets/effects/yes.mp3' : 'assets/effects/no.mp3');
+          sfx.volume = 0.4;
+          sfx.play().catch(() => {});
+        } catch (_) {}
+      }, 450);
     });
   } else {
     // spin back to back image
@@ -272,7 +297,82 @@ export function toggleReveal(
     skipRevealBtn.setAttribute('aria-label', 'Reveal singer');
     updateSignatureVisibility(signatureOverlay, signatureText);
     artistOverlay.classList.add('hidden');
+    // Hide/remove correct/incorrect mark when back image is shown
+    const zoomFrame = document.getElementById('zoomFrame');
+    const mark = zoomFrame && zoomFrame.querySelector('.reveal-mark');
+    if (mark) {
+      // Prefer removing to guarantee it doesn't overlay the back side
+      mark.remove();
+    }
   }
   skipRevealBtn.classList.add('ready');
   setPlayButtonState(playPauseBtn, 'play');
+}
+
+// Ensure front-side reveal without toggling back, used when a quiz answer is selected
+export function revealFront(
+  skipRevealBtn,
+  playPauseBtn,
+  artistOverlay,
+  signatureOverlay,
+  signatureText,
+  audioEl
+) {
+  if (currentDay === null) return;
+  audioEl.pause();
+  const dayImg = document.getElementById('dayImg');
+  // Force reveal state
+  isRevealed = true;
+  doReveal(currentDay, dayImg, artistOverlay, document.getElementById('artistLabel'), signatureOverlay, signatureText).then(() => {
+    skipRevealBtn.classList.add('revealed');
+    skipRevealBtn.setAttribute('aria-label', 'Hide singer');
+    artistOverlay.classList.add('hidden');
+    updateSignatureVisibility(signatureOverlay, signatureText);
+
+    const zoomFrame = document.getElementById('zoomFrame');
+    let mark = zoomFrame.querySelector('.reveal-mark');
+    if(!mark){
+      mark = document.createElement('div');
+      mark.className = 'reveal-mark';
+      zoomFrame.appendChild(mark);
+    }
+    const isCorrect = window.lastQuizCorrect !== false;
+    mark.className = 'reveal-mark ' + (isCorrect ? 'success' : 'fail');
+    // Play sfx after flip completes (~400ms)
+    setTimeout(() => {
+      try {
+        const sfx = new Audio(isCorrect ? 'assets/effects/yes.mp3' : 'assets/effects/no.mp3');
+        sfx.volume = 0.4;
+        sfx.play().catch(() => {});
+      } catch (_) {}
+    }, 450);
+  });
+  skipRevealBtn.classList.add('ready');
+  setPlayButtonState(playPauseBtn, 'play');
+}
+
+// Show the back image when returning to the quiz (hide front, remove marks)
+export function showBackForQuiz(
+  skipRevealBtn,
+  artistOverlay,
+  signatureOverlay,
+  signatureText
+) {
+  if (currentDay === null) return;
+  if (!isRevealed) return; // already on back
+  const dayImg = document.getElementById('dayImg');
+  // Flip back animation
+  dayImg.style.transform = 'rotateY(-90deg) scaleX(0.05)';
+  setTimeout(() => {
+    dayImg.src = currentBackSrc || dayImg.src;
+    dayImg.style.transform = 'rotateY(0deg) scaleX(1)';
+  }, 400);
+  isRevealed = false;
+  skipRevealBtn.classList.remove('revealed');
+  skipRevealBtn.setAttribute('aria-label', 'Reveal singer');
+  updateSignatureVisibility(signatureOverlay, signatureText);
+  artistOverlay.classList.add('hidden');
+  const zoomFrame = document.getElementById('zoomFrame');
+  const mark = zoomFrame && zoomFrame.querySelector('.reveal-mark');
+  if (mark) mark.remove();
 }

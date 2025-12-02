@@ -137,7 +137,16 @@ h1{
 .music-skip span{font-size:20px;line-height:1;}
 .music-skip:hover{color:var(--accent)}
 .music-skip:focus-visible{outline:2px solid var(--accent-2);outline-offset:4px}
-/* Snow toggle active state */
+/* Snow toggle on left side */
+#snowToggle{
+  position:fixed;
+  left:18px;
+  bottom:18px;
+  z-index:1200;
+  background:rgba(0,0,0,0.55);
+  border:1px solid rgba(212,175,55,0.35);
+  box-shadow:0 14px 30px rgba(0,0,0,0.4);
+}
 #snowToggle[aria-pressed="true"]{ color:#b7f5cf; }
 .brand-link{
   position:fixed;
@@ -690,8 +699,12 @@ h1{
   background:url("assets/images/pause.fill.svg") center/85% no-repeat;
 }
 .skip-btn{
-  background:var(--accent-2);
+  background:#666666;
   position:relative;
+  transition:background 0.2s ease;
+}
+.skip-btn.ready{
+  background:var(--accent-2);
 }
 .skip-btn::before{
   content:"";
@@ -706,7 +719,7 @@ h1{
 .skip-btn.revealed::before{
   background:url("assets/images/lightbulb.svg") center 55%/80% no-repeat;
 }
-.skip-btn.ready{
+.skip-btn.ready:not(:disabled){
   box-shadow:0 0 0 3px rgba(212,175,55,0.35), 0 10px 24px rgba(0,0,0,0.35);
 }
 .time-text{

@@ -31,8 +31,11 @@ import {
 import { 
   openModal, 
   closeModal, 
-  toggleReveal 
+  toggleReveal,
+  revealFront,
+  showBackForQuiz
 } from './js/modal.js';
+import { openRiddleDialog } from './js/riddles.js';
 
 // DOM elements
 const grid = document.getElementById('grid');
@@ -210,11 +213,21 @@ audioEl.addEventListener('ended', () => {
   applyBgMusicState(bgMusic, false);
   // At end, allow reveal if not yet allowed
   updateRevealEligibility();
+  // Auto-show quiz when audio finishes
+  const day = audioEl.dataset.currentDay;
+  if(day && !skipRevealBtn.classList.contains('revealed')){
+    // Ensure back image is shown while taking the quiz
+    showBackForQuiz(skipRevealBtn, artistOverlay, signatureOverlay, signatureText);
+    openRiddleDialog(day);
+  }
 });
 
-skipRevealBtn.addEventListener('click', () => {
-  if (skipRevealBtn.disabled) return;
-  toggleReveal(
+// Listen for quiz answer and trigger reveal
+document.addEventListener('quiz-answered', (e) => {
+  const { correct } = e.detail;
+  window.lastQuizCorrect = correct;
+  // Always reveal front side (no toggle-back) after answering quiz
+  revealFront(
     skipRevealBtn,
     playPauseBtn,
     artistOverlay,
@@ -223,6 +236,16 @@ skipRevealBtn.addEventListener('click', () => {
     audioEl
   );
   updateRevealEligibility();
+});
+
+skipRevealBtn.addEventListener('click', () => {
+  if (skipRevealBtn.disabled) return;
+  // Always open quiz to allow repeat attempts; show back image alongside quiz
+  const day = audioEl.dataset.currentDay;
+  if(day){
+    showBackForQuiz(skipRevealBtn, artistOverlay, signatureOverlay, signatureText);
+    openRiddleDialog(day);
+  }
 });
 
 progressTrack.addEventListener('pointerdown', (e) => startScrub(audioEl, progressTrack, e));
