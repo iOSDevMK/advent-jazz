@@ -281,7 +281,8 @@ export function toggleReveal(
       }
       // Determine if correct (if no quiz was taken, assume correct for direct reveal)
       const isCorrect = window.lastQuizCorrect !== false;
-      mark.className = 'reveal-mark ' + (isCorrect ? 'success' : 'fail');
+        mark.className = 'reveal-mark ' + (isCorrect ? 'success' : 'fail');
+        mark.setAttribute('aria-label', isCorrect ? 'Correct answer' : 'Wrong answer');
       
       // Play sfx after flip completes (~400ms)
       setTimeout(() => {
@@ -343,6 +344,7 @@ export function revealFront(
     }
     const isCorrect = window.lastQuizCorrect !== false;
     mark.className = 'reveal-mark ' + (isCorrect ? 'success' : 'fail');
+    mark.setAttribute('aria-label', isCorrect ? 'Correct answer' : 'Wrong answer');
     
     // Play sfx after flip completes (~400ms)
     setTimeout(() => {
