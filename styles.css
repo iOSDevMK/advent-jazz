@@ -206,7 +206,7 @@ h1{
   overflow:hidden;
   z-index:1250;
   opacity:1;
-  transition:opacity .35s ease, transform .35s ease;
+  transition:opacity .4s ease, transform .4s cubic-bezier(.22,.61,.36,1), left .9s cubic-bezier(.22,.61,.36,1), top .9s cubic-bezier(.22,.61,.36,1);
   animation:badge-bounce 1.8s ease-in-out infinite;
 }
 .music-badge img{
@@ -221,9 +221,17 @@ h1{
   transform:translate(-50%,-60%);
   animation:none;
 }
+.music-badge.hopping{
+  animation:badge-arc 1s cubic-bezier(.22,.61,.36,1);
+}
 @keyframes badge-bounce{
   0%,100%{ transform:translate(-50%,-50%) scale(1); }
   50%{ transform:translate(-50%,-85%) scale(1.1); }
+}
+@keyframes badge-arc{
+  0%{ transform:translate(-50%,-50%) scale(1); }
+  40%{ transform:translate(-50%,-100%) scale(1.08); }
+  100%{ transform:translate(-50%,-50%) scale(1); }
 }
 .site-footer{
   width:100%;

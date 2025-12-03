@@ -76,6 +76,12 @@ const factAudio = document.getElementById('factAudio');
 const signatureText = document.getElementById('signatureText');
 const trackIndicator = document.getElementById('trackIndicator');
 const musicBadge = document.getElementById('musicBadge');
+let badgeCycleTimer = null;
+let badgeCycleIndex = 1;
+let badgeCycleDir = 1;
+let badgeHopTimer = null;
+let lastBadgeLeft = null;
+let lastBadgeTop = null;
 
 // Initialize background music tracks
 initBgTracks();
@@ -104,20 +110,6 @@ function renderTrackIndicator(indicatorEl) {
   indicatorEl.setAttribute('aria-label', `Track ${displayCurrent} of ${total}`);
 }
 
-function updateMusicBadge() {
-  if (!musicBadge) return;
-  const playing = bgMusic && isBgMusicEnabled() && !bgMusic.paused && !bgMusic.ended;
-  const modalOpen = modal && !modal.classList.contains('hidden');
-  const lockOpen = lockDialog && !lockDialog.classList.contains('hidden');
-  const shouldShow = playing && !modalOpen && !lockOpen;
-  if (shouldShow) {
-    musicBadge.classList.remove('hidden');
-    positionBadgeOverToday(true);
-  } else {
-    musicBadge.classList.add('hidden');
-  }
-}
-
 function getTodayDoorElement() {
   const now = new Date();
   if (now.getMonth() !== CALENDAR_MONTH) return null;
@@ -125,9 +117,21 @@ function getTodayDoorElement() {
   return document.querySelector(`.door[data-day="${day}"]`);
 }
 
-function positionBadgeOverToday(force = false) {
+function getDoorElementByDay(day) {
+  return document.querySelector(`.door[data-day="${day}"]`);
+}
+
+function getUnlockedMaxDay() {
+  const now = new Date();
+  if (DEV_OPEN) return 24;
+  if (now.getMonth() !== CALENDAR_MONTH) return 1;
+  return Math.min(24, Math.max(1, now.getDate()));
+}
+
+function positionBadgeOverDay(day = null, force = false) {
   if (!musicBadge || (!force && musicBadge.classList.contains('hidden'))) return;
-  const door = getTodayDoorElement();
+  const targetDoor = day ? getDoorElementByDay(day) : getTodayDoorElement();
+  const door = targetDoor;
   if (!door) {
     musicBadge.style.left = '50%';
     musicBadge.style.top = '16px';
@@ -139,6 +143,76 @@ function positionBadgeOverToday(force = false) {
   const top = rect.top + (rect.height * 0.2) - (badgeSize * 0.1);
   musicBadge.style.left = `${left}px`;
   musicBadge.style.top = `${top}px`;
+  if (force || left !== lastBadgeLeft || top !== lastBadgeTop) {
+    triggerBadgeHop();
+  }
+  lastBadgeLeft = left;
+  lastBadgeTop = top;
+}
+
+function startBadgeCycle() {
+  const maxDay = getUnlockedMaxDay();
+  stopBadgeCycle();
+  if (maxDay <= 1) {
+    badgeCycleIndex = 1;
+    positionBadgeOverDay(1, true);
+    return;
+  }
+  badgeCycleIndex = 1;
+  badgeCycleDir = 1;
+  positionBadgeOverDay(badgeCycleIndex, true);
+  badgeCycleTimer = setInterval(() => {
+    const max = getUnlockedMaxDay();
+    if (max <= 1) {
+      stopBadgeCycle();
+      positionBadgeOverDay(1, true);
+      return;
+    }
+    badgeCycleIndex += badgeCycleDir;
+    if (badgeCycleIndex >= max) {
+      badgeCycleIndex = max;
+      badgeCycleDir = -1;
+    } else if (badgeCycleIndex <= 1) {
+      badgeCycleIndex = 1;
+      badgeCycleDir = 1;
+    }
+    positionBadgeOverDay(badgeCycleIndex, true);
+  }, 1800);
+}
+
+function stopBadgeCycle() {
+  if (badgeCycleTimer) {
+    clearInterval(badgeCycleTimer);
+    badgeCycleTimer = null;
+  }
+}
+
+function triggerBadgeHop() {
+  if (!musicBadge) return;
+  musicBadge.classList.add('hopping');
+  if (badgeHopTimer) clearTimeout(badgeHopTimer);
+  badgeHopTimer = setTimeout(() => {
+    musicBadge.classList.remove('hopping');
+  }, 850);
+}
+
+function updateMusicBadge() {
+  if (!musicBadge) return;
+  const playing = bgMusic && isBgMusicEnabled() && !bgMusic.paused && !bgMusic.ended;
+  const modalOpen = modal && !modal.classList.contains('hidden');
+  const lockOpen = lockDialog && !lockDialog.classList.contains('hidden');
+  const shouldShow = playing && !modalOpen && !lockOpen;
+  if (shouldShow) {
+    musicBadge.classList.remove('hidden');
+    startBadgeCycle();
+  } else {
+    musicBadge.classList.add('hidden');
+    stopBadgeCycle();
+  }
+}
+
+function positionBadgeOverToday(force = false) {
+  positionBadgeOverDay(null, force);
 }
 
 // Door click handler
@@ -342,10 +416,10 @@ progressHandle.addEventListener('pointerdown', (e) => {
 });
 
 window.addEventListener('resize', () => {
-  positionBadgeOverToday();
+  positionBadgeOverDay();
 });
 window.addEventListener('scroll', () => {
-  positionBadgeOverToday();
+  positionBadgeOverDay();
 });
 
 const badgeVisibilityObserver = new MutationObserver(() => updateMusicBadge());
@@ -355,6 +429,13 @@ if (modal) {
 if (lockDialog) {
   badgeVisibilityObserver.observe(lockDialog, { attributes: true, attributeFilter: ['class'] });
 }
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    stopBadgeCycle();
+  } else {
+    updateMusicBadge();
+  }
+});
 
 // Background music setup
 if (bgMusic) {
