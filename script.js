@@ -1,5 +1,5 @@
 // Main application orchestrator
-import { DEV_OPEN } from './js/constants.js';
+import { DEV_OPEN, CALENDAR_MONTH } from './js/constants.js';
 import { 
   initBgTracks, 
   applyBgMusicState, 
@@ -107,7 +107,35 @@ function renderTrackIndicator(indicatorEl) {
 function updateMusicBadge() {
   if (!musicBadge) return;
   const playing = bgMusic && isBgMusicEnabled() && !bgMusic.paused && !bgMusic.ended;
-  musicBadge.classList.toggle('hidden', !playing);
+  if (playing) {
+    musicBadge.classList.remove('hidden');
+    positionBadgeOverToday(true);
+  } else {
+    musicBadge.classList.add('hidden');
+  }
+}
+
+function getTodayDoorElement() {
+  const now = new Date();
+  if (now.getMonth() !== CALENDAR_MONTH) return null;
+  const day = now.getDate();
+  return document.querySelector(`.door[data-day="${day}"]`);
+}
+
+function positionBadgeOverToday(force = false) {
+  if (!musicBadge || (!force && musicBadge.classList.contains('hidden'))) return;
+  const door = getTodayDoorElement();
+  if (!door) {
+    musicBadge.style.left = '50%';
+    musicBadge.style.top = '16px';
+    return;
+  }
+  const rect = door.getBoundingClientRect();
+  const badgeSize = musicBadge.offsetWidth || 70;
+  const left = rect.left + (rect.width / 2);
+  const top = rect.top + (rect.height * 0.2) - (badgeSize * 0.1);
+  musicBadge.style.left = `${left}px`;
+  musicBadge.style.top = `${top}px`;
 }
 
 // Door click handler
@@ -207,10 +235,13 @@ closeBtn.addEventListener('click', () => { closeModal(modal, audioEl, bgMusic); 
 
 playPauseBtn.addEventListener('click', () => {
   if (audioEl.paused) {
+    setPlayButtonState(playPauseBtn, 'pause');
     if (audioEl.ended) {
       audioEl.currentTime = 0;
     }
-    audioEl.play().then(() => { setPlayButtonState(playPauseBtn, 'pause'); }).catch(() => {});
+    audioEl.play().catch(() => {
+      setPlayButtonState(playPauseBtn, 'play');
+    });
   } else {
     audioEl.pause();
     setPlayButtonState(playPauseBtn, 'play');
@@ -301,22 +332,36 @@ progressHandle.addEventListener('pointerdown', (e) => {
   startScrub(audioEl, progressTrack, e);
 });
 
+window.addEventListener('resize', () => {
+  positionBadgeOverToday();
+});
+window.addEventListener('scroll', () => {
+  positionBadgeOverToday();
+});
+
 // Background music setup
 if (bgMusic) {
   setBgTrack(bgMusic, pickNextBgTrack(true));
   renderTrackIndicator(trackIndicator);
   applyBgMusicState(bgMusic, false);
-  bgMusic.play().catch(() => {
-    // If blocked by browser, play on any user interaction
-    const playBg = () => {
-      applyBgMusicState(bgMusic, false);
-      bgMusic.play().catch(() => {});
-      document.removeEventListener('click', playBg);
-      document.removeEventListener('keydown', playBg);
-    };
-    document.addEventListener('click', playBg);
-    document.addEventListener('keydown', playBg);
-  });
+  const initialPlay = bgMusic.play();
+  if (initialPlay && typeof initialPlay.then === 'function') {
+    initialPlay
+      .then(() => { updateMusicToggleLabel(musicToggle, bgMusic); updateMusicBadge(); })
+      .catch(() => {
+        // If blocked by browser, play on any user interaction
+        const playBg = () => {
+          applyBgMusicState(bgMusic, false);
+          bgMusic.play().catch(() => {});
+          updateMusicToggleLabel(musicToggle, bgMusic);
+          updateMusicBadge();
+          document.removeEventListener('click', playBg);
+          document.removeEventListener('keydown', playBg);
+        };
+        document.addEventListener('click', playBg);
+        document.addEventListener('keydown', playBg);
+      });
+  }
   bgMusic.addEventListener('ended', () => {
     setBgTrack(bgMusic, pickNextBgTrack(true));
     renderTrackIndicator(trackIndicator);
