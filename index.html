@@ -37,15 +37,16 @@
     </div>
     <div class="music-controls">
       <div id="trackIndicator" class="track-indicator" aria-live="polite" role="presentation">
-        <span class="track-label"></span>
+        <span class="track-label-row"><span class="track-note" aria-hidden="true">♪</span><span class="track-label"></span></span>
         <div class="track-bar" role="presentation"><div class="track-bar-fill"></div></div>
       </div>
-      <button id="musicPrev" class="music-skip" aria-label="Previous background track"><span aria-hidden="true">⏮</span></button>
-      <button id="musicToggle" class="music-toggle" aria-pressed="false" aria-label="Toggle background music">
-        <span class="music-note" aria-hidden="true">♪</span>
-        <span class="music-playpause" aria-hidden="true">▶</span>
-      </button>
-      <button id="musicNext" class="music-skip" aria-label="Next background track"><span aria-hidden="true">⏭</span></button>
+      <div class="player-buttons" role="group" aria-label="Background track controls">
+        <button id="musicPrev" class="music-skip" aria-label="Previous background track"><span aria-hidden="true">⏮</span></button>
+        <button id="musicToggle" class="music-toggle" aria-pressed="false" aria-label="Toggle background music">
+          <span class="music-playpause" aria-hidden="true">▶</span>
+        </button>
+        <button id="musicNext" class="music-skip" aria-label="Next background track"><span aria-hidden="true">⏭</span></button>
+      </div>
     </div>
     <button id="snowToggle" class="music-skip" aria-pressed="false" aria-label="Toggle snowfall"><span aria-hidden="true">❄</span></button>
     <a class="brand-link" href="https://www.instagram.com/milesahead.digitalart" target="_blank" rel="noopener noreferrer">milesahead.digitalart</a>

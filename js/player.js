@@ -88,6 +88,12 @@ export async function initBgPlayer({
     await loadAvailableTracks();
   }
 
+  // Choose a random track on load so each refresh starts fresh
+  const initialTotal = getBgTrackPosition().total;
+  if (initialTotal > 0) {
+    bgTrackIndex = Math.floor(Math.random() * initialTotal);
+  }
+
   const renderTrackIndicator = (progressPct = null) => {
     if (!trackIndicator) return;
     const labelEl = trackIndicator.querySelector('.track-label');
@@ -176,7 +182,7 @@ export async function initBgPlayer({
   }
 
   // initial setup
-  setBgTrackIndex(0);
+  setBgTrackIndex(bgTrackIndex);
   renderTrackIndicator(0);
   applyBgMusicState(bgMusic, false);
   const initialPlay = bgMusic.play();
