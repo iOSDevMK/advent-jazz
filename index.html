@@ -37,7 +37,10 @@
     </div>
     <div class="music-controls">
       <div id="trackIndicator" class="track-indicator" aria-live="polite" role="presentation">
-        <span class="track-label-row"><span class="track-note" aria-hidden="true">♪</span><span class="track-label"></span></span>
+        <div class="track-header">
+          <span class="track-label-row"><span class="track-note" aria-hidden="true">♪</span><span class="track-label"></span></span>
+          <button id="musicShuffle" class="music-shuffle" aria-pressed="true" aria-label="Toggle shuffle">🔀</button>
+        </div>
         <div class="track-bar" role="presentation"><div class="track-bar-fill"></div></div>
       </div>
       <div class="player-buttons" role="group" aria-label="Background track controls">

@@ -68,6 +68,7 @@ const lockCloseBtn = document.getElementById('lockCloseBtn');
 const lockLead = document.getElementById('lockLead');
 const lockHistory = document.getElementById('lockHistory');
 const musicToggle = document.getElementById('musicToggle');
+const musicShuffle = document.getElementById('musicShuffle');
 const factAudioBtn = document.getElementById('factAudioBtn');
 const musicPrev = document.getElementById('musicPrev');
 const musicNext = document.getElementById('musicNext');
@@ -279,8 +280,9 @@ progressHandle.addEventListener('pointerdown', (e) => {
     musicToggle,
     musicPrev,
     musicNext,
+    musicShuffle,
     trackIndicator,
-  updateMusicBadge,
+    updateMusicBadge,
     setBgTrack,
     getBgTrackPosition,
     isMusicEnabled: isBgMusicEnabled,

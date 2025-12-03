@@ -70,6 +70,7 @@ export async function initBgPlayer({
   musicToggle,
   musicPrev,
   musicNext,
+  musicShuffle,
   trackIndicator,
   updateMusicBadge,
   setBgTrack,
@@ -83,6 +84,7 @@ export async function initBgPlayer({
   let lastTrackProgressPct = 0;
   let bgTrackIndex = 0;
   let autoAdvanced = false;
+  let isShuffle = true;
 
   if (typeof loadAvailableTracks === 'function') {
     await loadAvailableTracks();
@@ -123,6 +125,24 @@ export async function initBgPlayer({
     renderTrackIndicator(0);
   };
 
+  const nextIndex = () => {
+    const { total } = getBgTrackPosition();
+    if (!total) return bgTrackIndex;
+    if (!isShuffle) return (bgTrackIndex + 1) % total;
+    if (total === 1) return bgTrackIndex;
+    let candidate = bgTrackIndex;
+    while (candidate === bgTrackIndex) {
+      candidate = Math.floor(Math.random() * total);
+    }
+    return candidate;
+  };
+
+  const updateShuffleState = () => {
+    if (!musicShuffle) return;
+    musicShuffle.setAttribute('aria-pressed', String(isShuffle));
+    musicShuffle.classList.toggle('active', isShuffle);
+  };
+
   const trackBar = trackIndicator ? trackIndicator.querySelector('.track-bar') : null;
   if (trackBar) {
     trackBar.addEventListener('click', (e) => {
@@ -161,7 +181,7 @@ export async function initBgPlayer({
   const handleNext = () => {
     const { total } = getBgTrackPosition();
     if (!total) return;
-    setBgTrackIndex(bgTrackIndex + 1);
+    setBgTrackIndex(nextIndex());
     updateMusicToggleLabel(musicToggle, bgMusic);
     renderTrackIndicator(lastTrackProgressPct);
     applyBgMusicState(bgMusic, false);
@@ -179,6 +199,14 @@ export async function initBgPlayer({
 
   if (musicNext) {
     musicNext.addEventListener('click', handleNext);
+  }
+
+  if (musicShuffle) {
+    musicShuffle.addEventListener('click', () => {
+      isShuffle = !isShuffle;
+      updateShuffleState();
+    });
+    updateShuffleState();
   }
 
   // initial setup
