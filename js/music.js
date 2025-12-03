@@ -13,6 +13,29 @@ export function initBgTracks() {
   }
 }
 
+// Probe available background tracks by HEAD requests; falls back to existing list if none found
+export async function loadAvailableBgTracks(max = MAX_BG_TRACKS) {
+  const discovered = [];
+  for (let i = 1; i <= max; i++) {
+    const url = `assets/music/song-${i}.mp3`;
+    try {
+      const res = await fetch(url, { method: 'HEAD' });
+      if (res.ok) {
+        discovered.push(url);
+      }
+    } catch (_) {
+      // ignore fetch failures
+    }
+  }
+  if (discovered.length > 0) {
+    bgTracks = discovered;
+    if (currentBgTrack >= bgTracks.length) {
+      currentBgTrack = 0;
+    }
+  }
+  return bgTracks.length;
+}
+
 export function setFactAudioPlaying(playing) {
   isFactAudioPlaying = playing;
 }
@@ -101,4 +124,8 @@ export function getBgTrackPosition() {
   const total = bgTracks.length;
   const current = currentBgTrack >= 0 ? currentBgTrack + 1 : (total > 0 ? 1 : 0);
   return { current, total };
+}
+
+export function getBgTrackCount() {
+  return bgTracks.length;
 }

@@ -65,7 +65,7 @@ export function startScrub(audioEl, progressTrack, e) {
 }
 
 // Background music controller: handles track rotation, indicator updates, and seeking
-export function initBgPlayer({
+export async function initBgPlayer({
   bgMusic,
   musicToggle,
   musicPrev,
@@ -76,24 +76,30 @@ export function initBgPlayer({
   getBgTrackPosition,
   isBgMusicEnabled,
   applyBgMusicState,
-  updateMusicToggleLabel
+  updateMusicToggleLabel,
+  loadAvailableTracks
 }) {
   if (!bgMusic) return;
   let lastTrackProgressPct = 0;
   let bgTrackIndex = 0;
+  let autoAdvanced = false;
+
+  if (typeof loadAvailableTracks === 'function') {
+    await loadAvailableTracks();
+  }
 
   const renderTrackIndicator = (progressPct = null) => {
     if (!trackIndicator) return;
     const labelEl = trackIndicator.querySelector('.track-label');
     const fillEl = trackIndicator.querySelector('.track-bar-fill');
-    const { current, total } = getBgTrackPosition();
+    const { total } = getBgTrackPosition();
     if (!total) {
       if (labelEl) labelEl.textContent = '';
       if (fillEl) fillEl.style.width = '0%';
       trackIndicator.setAttribute('aria-label', 'No background tracks loaded');
       return;
     }
-    const displayCurrent = Math.max(1, current || 1);
+    const displayCurrent = Math.max(1, (bgTrackIndex % total) + 1);
     if (labelEl) labelEl.textContent = `Track ${displayCurrent}`;
     if (fillEl) {
       const pct = progressPct == null ? 0 : Math.min(100, Math.max(0, progressPct));
@@ -146,13 +152,27 @@ export function initBgPlayer({
     });
   }
 
+  const handleNext = () => {
+    const { total } = getBgTrackPosition();
+    if (!total) return;
+    setBgTrackIndex(bgTrackIndex + 1);
+    updateMusicToggleLabel(musicToggle, bgMusic);
+    renderTrackIndicator(lastTrackProgressPct);
+    applyBgMusicState(bgMusic, false);
+    bgMusic.play().catch(() => {});
+    updateMusicBadge();
+  };
+
+  const triggerNext = () => {
+    if (musicNext) {
+      musicNext.click();
+    } else {
+      handleNext();
+    }
+  };
+
   if (musicNext) {
-    musicNext.addEventListener('click', () => {
-      setBgTrackIndex(bgTrackIndex + 1);
-      updateMusicToggleLabel(musicToggle, bgMusic);
-      renderTrackIndicator(lastTrackProgressPct);
-      updateMusicBadge();
-    });
+    musicNext.addEventListener('click', handleNext);
   }
 
   // initial setup
@@ -183,17 +203,15 @@ export function initBgPlayer({
     const pct = dur && isFinite(dur) && dur > 0 ? (cur / dur) * 100 : 0;
     lastTrackProgressPct = pct;
     renderTrackIndicator(pct);
+    if (!autoAdvanced && dur && isFinite(dur) && dur > 0 && cur >= dur * 0.985) {
+      autoAdvanced = true;
+      triggerNext();
+      setTimeout(() => { autoAdvanced = false; }, 300);
+    }
   });
 
-  const advanceTrack = () => {
-    setBgTrackIndex(bgTrackIndex + 1);
-    applyBgMusicState(bgMusic, false);
-    bgMusic.play().catch(() => {});
-    updateMusicBadge();
-  };
-
-  bgMusic.addEventListener('ended', advanceTrack);
-  bgMusic.addEventListener('error', advanceTrack);
+  bgMusic.addEventListener('ended', triggerNext);
+  bgMusic.addEventListener('error', triggerNext);
 
   bgMusic.addEventListener('play', () => { updateMusicToggleLabel(musicToggle, bgMusic); updateMusicBadge(); });
   bgMusic.addEventListener('pause', () => { updateMusicToggleLabel(musicToggle, bgMusic); updateMusicBadge(); });

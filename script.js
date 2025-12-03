@@ -6,7 +6,9 @@ import {
   updateMusicToggleLabel, 
   setBgTrack,
   getBgTrackPosition,
-  isBgMusicEnabled 
+  isBgMusicEnabled,
+  loadAvailableBgTracks,
+  getBgTrackCount
 } from './js/music.js';
 import { 
   setupFactAudioEventListeners, 
@@ -271,16 +273,19 @@ progressHandle.addEventListener('pointerdown', (e) => {
 });
 
 // Background music setup
-initBgPlayer({
-  bgMusic,
-  musicToggle,
-  musicPrev,
-  musicNext,
-  trackIndicator,
+(async () => {
+  await initBgPlayer({
+    bgMusic,
+    musicToggle,
+    musicPrev,
+    musicNext,
+    trackIndicator,
   updateMusicBadge,
-  setBgTrack,
-  getBgTrackPosition,
-  isMusicEnabled: isBgMusicEnabled,
-  applyBgMusicState,
-  updateMusicToggleLabel
-});
+    setBgTrack,
+    getBgTrackPosition,
+    isMusicEnabled: isBgMusicEnabled,
+    applyBgMusicState,
+    updateMusicToggleLabel,
+    loadAvailableTracks: () => loadAvailableBgTracks()
+  });
+})();
