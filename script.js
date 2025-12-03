@@ -7,7 +7,8 @@ import {
   toggleBgMusic, 
   skipBgTrack, 
   pickNextBgTrack, 
-  setBgTrack 
+  setBgTrack,
+  getBgTrackPosition 
 } from './js/music.js';
 import { 
   setupFactAudioEventListeners, 
@@ -72,6 +73,7 @@ const snowToggle = document.getElementById('snowToggle');
 const bgMusic = document.getElementById('bgMusic');
 const factAudio = document.getElementById('factAudio');
 const signatureText = document.getElementById('signatureText');
+const trackIndicator = document.getElementById('trackIndicator');
 
 // Initialize background music tracks
 initBgTracks();
@@ -85,6 +87,19 @@ function updateRevealEligibility() {
   skipRevealBtn.classList.toggle('ready', ready);
   const label = ready ? (skipRevealBtn.classList.contains('revealed') ? 'Hide singer' : 'Reveal singer') : 'Reveal locked until 50%';
   skipRevealBtn.setAttribute('aria-label', label);
+}
+
+function renderTrackIndicator(indicatorEl) {
+  if (!indicatorEl) return;
+  const { current, total } = getBgTrackPosition();
+  if (!total) {
+    indicatorEl.textContent = '';
+    indicatorEl.setAttribute('aria-label', 'No background tracks loaded');
+    return;
+  }
+  const displayCurrent = Math.max(1, current || 1);
+  indicatorEl.textContent = `Track ${displayCurrent}`;
+  indicatorEl.setAttribute('aria-label', `Track ${displayCurrent} of ${total}`);
 }
 
 // Door click handler
@@ -151,6 +166,7 @@ if (musicPrev) {
   musicPrev.addEventListener('click', () => {
     skipBgTrack(bgMusic, -1);
     updateMusicToggleLabel(musicToggle, bgMusic);
+    renderTrackIndicator(trackIndicator);
   });
 }
 
@@ -158,6 +174,7 @@ if (musicNext) {
   musicNext.addEventListener('click', () => {
     skipBgTrack(bgMusic, 1);
     updateMusicToggleLabel(musicToggle, bgMusic);
+    renderTrackIndicator(trackIndicator);
   });
 }
 
@@ -276,6 +293,7 @@ progressHandle.addEventListener('pointerdown', (e) => {
 // Background music setup
 if (bgMusic) {
   setBgTrack(bgMusic, pickNextBgTrack(true));
+  renderTrackIndicator(trackIndicator);
   applyBgMusicState(bgMusic, false);
   bgMusic.play().catch(() => {
     // If blocked by browser, play on any user interaction
@@ -290,11 +308,13 @@ if (bgMusic) {
   });
   bgMusic.addEventListener('ended', () => {
     setBgTrack(bgMusic, pickNextBgTrack(true));
+    renderTrackIndicator(trackIndicator);
     applyBgMusicState(bgMusic, false);
     bgMusic.play().catch(() => {});
   });
   bgMusic.addEventListener('error', () => {
     setBgTrack(bgMusic, pickNextBgTrack(true));
+    renderTrackIndicator(trackIndicator);
     applyBgMusicState(bgMusic, false);
     bgMusic.play().catch(() => {});
   });
@@ -305,3 +325,4 @@ if (bgMusic) {
 }
 
 updateMusicToggleLabel(musicToggle, bgMusic);
+renderTrackIndicator(trackIndicator);

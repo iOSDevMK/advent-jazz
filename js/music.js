@@ -96,3 +96,9 @@ export function setBgTrack(bgMusic, index) {
 export function isBgMusicEnabled() {
   return bgMusicEnabled;
 }
+
+export function getBgTrackPosition() {
+  const total = bgTracks.length;
+  const current = currentBgTrack >= 0 ? currentBgTrack + 1 : (total > 0 ? 1 : 0);
+  return { current, total };
+}
