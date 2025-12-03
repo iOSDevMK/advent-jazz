@@ -7,6 +7,7 @@ import {
   setBgTrack,
   getBgTrackPosition,
   isBgMusicEnabled,
+  setBgMusicEnabled,
   loadAvailableBgTracks,
   getBgTrackCount
 } from './js/music.js';
@@ -285,7 +286,8 @@ progressHandle.addEventListener('pointerdown', (e) => {
     updateMusicBadge,
     setBgTrack,
     getBgTrackPosition,
-    isMusicEnabled: isBgMusicEnabled,
+    isBgMusicEnabled,
+    setBgMusicEnabled,
     applyBgMusicState,
     updateMusicToggleLabel,
     loadAvailableTracks: () => loadAvailableBgTracks()

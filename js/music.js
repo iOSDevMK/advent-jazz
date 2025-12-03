@@ -75,9 +75,9 @@ export function toggleBgMusic(bgMusic, audioEl) {
   } else {
     bgMusicEnabled = true;
     bgMusic.play().catch(() => {});
-    applyBgMusicState(bgMusic, !audioEl.paused && !audioEl.ended);
+    applyBgMusicState(bgMusic, audioEl ? (!audioEl.paused && !audioEl.ended) : false);
   }
-  applyBgMusicState(bgMusic, !audioEl.paused && !audioEl.ended);
+  applyBgMusicState(bgMusic, audioEl ? (!audioEl.paused && !audioEl.ended) : false);
 }
 
 export function skipBgTrack(bgMusic, dir) {
@@ -118,6 +118,10 @@ export function setBgTrack(bgMusic, index) {
 
 export function isBgMusicEnabled() {
   return bgMusicEnabled;
+}
+
+export function setBgMusicEnabled(enabled) {
+  bgMusicEnabled = !!enabled;
 }
 
 export function getBgTrackPosition() {

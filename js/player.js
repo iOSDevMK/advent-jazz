@@ -76,6 +76,7 @@ export async function initBgPlayer({
   setBgTrack,
   getBgTrackPosition,
   isBgMusicEnabled,
+  setBgMusicEnabled,
   applyBgMusicState,
   updateMusicToggleLabel,
   loadAvailableTracks
@@ -160,8 +161,10 @@ export async function initBgPlayer({
     musicToggle.addEventListener('click', () => {
       if (!bgMusic) return;
       if (isBgMusicEnabled()) {
+        setBgMusicEnabled(false);
         bgMusic.pause();
       } else {
+        setBgMusicEnabled(true);
         bgMusic.play().catch(() => {});
       }
       updateMusicToggleLabel(musicToggle, bgMusic);
