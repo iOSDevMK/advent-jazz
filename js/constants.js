@@ -1,5 +1,5 @@
 // Constants and configuration
-export const MAX_BG_TRACKS = 12;
+export const MAX_BG_TRACKS = 20;
 export const FACT_AUDIO_MAX = 24;
 export const BG_VOL_NORMAL = 0.05;
 export const BG_VOL_DAY_DUCK = 0.015;
