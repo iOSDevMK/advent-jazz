@@ -8,7 +8,8 @@ import {
   skipBgTrack, 
   pickNextBgTrack, 
   setBgTrack,
-  getBgTrackPosition 
+  getBgTrackPosition,
+  isBgMusicEnabled 
 } from './js/music.js';
 import { 
   setupFactAudioEventListeners, 
@@ -74,6 +75,7 @@ const bgMusic = document.getElementById('bgMusic');
 const factAudio = document.getElementById('factAudio');
 const signatureText = document.getElementById('signatureText');
 const trackIndicator = document.getElementById('trackIndicator');
+const musicBadge = document.getElementById('musicBadge');
 
 // Initialize background music tracks
 initBgTracks();
@@ -100,6 +102,12 @@ function renderTrackIndicator(indicatorEl) {
   const displayCurrent = Math.max(1, current || 1);
   indicatorEl.textContent = `Track ${displayCurrent}`;
   indicatorEl.setAttribute('aria-label', `Track ${displayCurrent} of ${total}`);
+}
+
+function updateMusicBadge() {
+  if (!musicBadge) return;
+  const playing = bgMusic && isBgMusicEnabled() && !bgMusic.paused && !bgMusic.ended;
+  musicBadge.classList.toggle('hidden', !playing);
 }
 
 // Door click handler
@@ -159,6 +167,7 @@ if (musicToggle) {
   musicToggle.addEventListener('click', () => {
     toggleBgMusic(bgMusic, audioEl);
     updateMusicToggleLabel(musicToggle, bgMusic);
+    updateMusicBadge();
   });
 }
 
@@ -167,6 +176,7 @@ if (musicPrev) {
     skipBgTrack(bgMusic, -1);
     updateMusicToggleLabel(musicToggle, bgMusic);
     renderTrackIndicator(trackIndicator);
+    updateMusicBadge();
   });
 }
 
@@ -175,6 +185,7 @@ if (musicNext) {
     skipBgTrack(bgMusic, 1);
     updateMusicToggleLabel(musicToggle, bgMusic);
     renderTrackIndicator(trackIndicator);
+    updateMusicBadge();
   });
 }
 
@@ -311,18 +322,21 @@ if (bgMusic) {
     renderTrackIndicator(trackIndicator);
     applyBgMusicState(bgMusic, false);
     bgMusic.play().catch(() => {});
+    updateMusicBadge();
   });
   bgMusic.addEventListener('error', () => {
     setBgTrack(bgMusic, pickNextBgTrack(true));
     renderTrackIndicator(trackIndicator);
     applyBgMusicState(bgMusic, false);
     bgMusic.play().catch(() => {});
+    updateMusicBadge();
   });
-  bgMusic.addEventListener('play', () => updateMusicToggleLabel(musicToggle, bgMusic));
-  bgMusic.addEventListener('pause', () => updateMusicToggleLabel(musicToggle, bgMusic));
-  bgMusic.addEventListener('ended', () => updateMusicToggleLabel(musicToggle, bgMusic));
-  bgMusic.addEventListener('error', () => updateMusicToggleLabel(musicToggle, bgMusic));
+  bgMusic.addEventListener('play', () => { updateMusicToggleLabel(musicToggle, bgMusic); updateMusicBadge(); });
+  bgMusic.addEventListener('pause', () => { updateMusicToggleLabel(musicToggle, bgMusic); updateMusicBadge(); });
+  bgMusic.addEventListener('ended', () => { updateMusicToggleLabel(musicToggle, bgMusic); updateMusicBadge(); });
+  bgMusic.addEventListener('error', () => { updateMusicToggleLabel(musicToggle, bgMusic); updateMusicBadge(); });
 }
 
 updateMusicToggleLabel(musicToggle, bgMusic);
 renderTrackIndicator(trackIndicator);
+updateMusicBadge();
