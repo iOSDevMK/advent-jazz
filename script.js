@@ -107,7 +107,10 @@ function renderTrackIndicator(indicatorEl) {
 function updateMusicBadge() {
   if (!musicBadge) return;
   const playing = bgMusic && isBgMusicEnabled() && !bgMusic.paused && !bgMusic.ended;
-  if (playing) {
+  const modalOpen = modal && !modal.classList.contains('hidden');
+  const lockOpen = lockDialog && !lockDialog.classList.contains('hidden');
+  const shouldShow = playing && !modalOpen && !lockOpen;
+  if (shouldShow) {
     musicBadge.classList.remove('hidden');
     positionBadgeOverToday(true);
   } else {
@@ -142,6 +145,7 @@ function positionBadgeOverToday(force = false) {
 function onDoorClick(e) {
   if (!DEV_OPEN && e.currentTarget.classList.contains('locked')) {
     showLockDialog(lockDialog, lockLead, lockHistory, factAudio, factAudioBtn, e.currentTarget.dataset.day);
+    updateMusicBadge();
     return;
   }
   const day = e.currentTarget.dataset.day;
@@ -166,6 +170,7 @@ function onDoorClick(e) {
     timeElapsed,
     timeRemaining
   );
+  updateMusicBadge();
 }
 
 // Create calendar doors
@@ -230,8 +235,8 @@ if(snowToggle){
 }
 
 // Modal controls
-backdrop.addEventListener('click', () => { closeModal(modal, audioEl, bgMusic); toggleSnowfall(true); });
-closeBtn.addEventListener('click', () => { closeModal(modal, audioEl, bgMusic); toggleSnowfall(true); });
+backdrop.addEventListener('click', () => { closeModal(modal, audioEl, bgMusic); toggleSnowfall(true); updateMusicBadge(); });
+closeBtn.addEventListener('click', () => { closeModal(modal, audioEl, bgMusic); toggleSnowfall(true); updateMusicBadge(); });
 
 playPauseBtn.addEventListener('click', () => {
   if (audioEl.paused) {
@@ -247,11 +252,13 @@ playPauseBtn.addEventListener('click', () => {
     setPlayButtonState(playPauseBtn, 'play');
   }
   updateRevealEligibility();
+  updateMusicBadge();
 });
 
 audioEl.addEventListener('timeupdate', () => { 
   updateProgress(audioEl, progressFill, progressHandle, timeElapsed, timeRemaining);
   updateRevealEligibility();
+  updateMusicBadge();
 });
 audioEl.addEventListener('loadedmetadata', () => { 
   updateProgress(audioEl, progressFill, progressHandle, timeElapsed, timeRemaining);
@@ -271,6 +278,7 @@ audioEl.addEventListener('ended', () => {
   applyBgMusicState(bgMusic, false);
   // At end, allow reveal if not yet allowed
   updateRevealEligibility();
+  updateMusicBadge();
   // Auto-show quiz when audio finishes
   const day = audioEl.dataset.currentDay;
   if(day && !skipRevealBtn.classList.contains('revealed')){
@@ -294,6 +302,7 @@ document.addEventListener('quiz-answered', (e) => {
     audioEl
   );
   updateRevealEligibility();
+  updateMusicBadge();
 });
 
 skipRevealBtn.addEventListener('click', () => {
@@ -338,6 +347,14 @@ window.addEventListener('resize', () => {
 window.addEventListener('scroll', () => {
   positionBadgeOverToday();
 });
+
+const badgeVisibilityObserver = new MutationObserver(() => updateMusicBadge());
+if (modal) {
+  badgeVisibilityObserver.observe(modal, { attributes: true, attributeFilter: ['class'] });
+}
+if (lockDialog) {
+  badgeVisibilityObserver.observe(lockDialog, { attributes: true, attributeFilter: ['class'] });
+}
 
 // Background music setup
 if (bgMusic) {
