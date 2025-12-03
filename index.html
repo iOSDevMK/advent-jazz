@@ -36,11 +36,9 @@
       <img src="assets/images/dancing.gif" alt="" loading="lazy">
     </div>
     <div class="music-controls">
-      <div id="trackIndicator" class="track-indicator" aria-live="polite">
+      <div id="trackIndicator" class="track-indicator" aria-live="polite" role="presentation">
         <span class="track-label"></span>
-        <div class="track-bar" role="presentation">
-          <div class="track-bar-fill"></div>
-        </div>
+        <div class="track-bar" role="presentation"><div class="track-bar-fill"></div></div>
       </div>
       <button id="musicPrev" class="music-skip" aria-label="Previous background track"><span aria-hidden="true">⏮</span></button>
       <button id="musicToggle" class="music-toggle" aria-pressed="false" aria-label="Toggle background music">
@@ -91,7 +89,7 @@
       </div>
     </div>
 
-    <audio id="bgMusic" loop>
+    <audio id="bgMusic">
       <source src="assets/music/song-1.mp3" type="audio/mpeg">
     </audio>
 

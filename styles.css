@@ -126,6 +126,8 @@ h1{
   border-radius:999px;
   background:rgba(0,0,0,0.35);
   overflow:hidden;
+  cursor:pointer;
+  position:relative;
 }
 .track-bar-fill{
   width:0%;
