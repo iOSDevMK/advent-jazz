@@ -99,16 +99,23 @@ function updateRevealEligibility() {
   skipRevealBtn.setAttribute('aria-label', label);
 }
 
-function renderTrackIndicator(indicatorEl) {
+function renderTrackIndicator(indicatorEl, progressPct = null) {
   if (!indicatorEl) return;
+  const labelEl = indicatorEl.querySelector('.track-label');
+  const fillEl = indicatorEl.querySelector('.track-bar-fill');
   const { current, total } = getBgTrackPosition();
   if (!total) {
-    indicatorEl.textContent = '';
+    if (labelEl) labelEl.textContent = '';
+    if (fillEl) fillEl.style.width = '0%';
     indicatorEl.setAttribute('aria-label', 'No background tracks loaded');
     return;
   }
   const displayCurrent = Math.max(1, current || 1);
-  indicatorEl.textContent = `Track ${displayCurrent}`;
+  if (labelEl) labelEl.textContent = `Track ${displayCurrent}`;
+  if (fillEl) {
+    const pct = progressPct == null ? 0 : Math.min(100, Math.max(0, progressPct));
+    fillEl.style.width = `${pct}%`;
+  }
   indicatorEl.setAttribute('aria-label', `Track ${displayCurrent} of ${total}`);
 }
 
@@ -314,7 +321,7 @@ progressHandle.addEventListener('pointerdown', (e) => {
 
 // Background music setup
 if (bgMusic) {
-  setBgTrack(bgMusic, pickNextBgTrack(true));
+  setBgTrack(bgMusic, pickNextBgTrack(false));
   renderTrackIndicator(trackIndicator);
   applyBgMusicState(bgMusic, false);
   const initialPlay = bgMusic.play();
@@ -336,25 +343,31 @@ if (bgMusic) {
       });
   }
   bgMusic.addEventListener('ended', () => {
-    setBgTrack(bgMusic, pickNextBgTrack(true));
+    setBgTrack(bgMusic, pickNextBgTrack(false));
     renderTrackIndicator(trackIndicator);
     applyBgMusicState(bgMusic, false);
     bgMusic.play().catch(() => {});
     updateMusicBadge();
   });
+  bgMusic.addEventListener('timeupdate', () => {
+    const dur = bgMusic.duration;
+    const cur = bgMusic.currentTime;
+    const pct = dur && isFinite(dur) && dur > 0 ? (cur / dur) * 100 : 0;
+    renderTrackIndicator(trackIndicator, pct);
+  });
   bgMusic.addEventListener('error', () => {
-    setBgTrack(bgMusic, pickNextBgTrack(true));
+    setBgTrack(bgMusic, pickNextBgTrack(false));
     renderTrackIndicator(trackIndicator);
     applyBgMusicState(bgMusic, false);
     bgMusic.play().catch(() => {});
     updateMusicBadge();
   });
   bgMusic.addEventListener('play', () => { updateMusicToggleLabel(musicToggle, bgMusic); updateMusicBadge(); });
-  bgMusic.addEventListener('pause', () => { updateMusicToggleLabel(musicToggle, bgMusic); updateMusicBadge(); });
-  bgMusic.addEventListener('ended', () => { updateMusicToggleLabel(musicToggle, bgMusic); updateMusicBadge(); });
-  bgMusic.addEventListener('error', () => { updateMusicToggleLabel(musicToggle, bgMusic); updateMusicBadge(); });
+bgMusic.addEventListener('pause', () => { updateMusicToggleLabel(musicToggle, bgMusic); updateMusicBadge(); });
+bgMusic.addEventListener('ended', () => { updateMusicToggleLabel(musicToggle, bgMusic); updateMusicBadge(); });
+bgMusic.addEventListener('error', () => { updateMusicToggleLabel(musicToggle, bgMusic); updateMusicBadge(); });
 }
 
 updateMusicToggleLabel(musicToggle, bgMusic);
-renderTrackIndicator(trackIndicator);
+renderTrackIndicator(trackIndicator, 0);
 updateMusicBadge();
