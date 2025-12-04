@@ -231,8 +231,9 @@ h1{
   display:grid;
   place-items:center;
   transition:background .2s ease, transform .2s ease;
+  position:relative;
 }
-.music-skip span{font-size:18px;line-height:1;}
+.music-skip span{font-size:18px;line-height:1;display:none;}
 .music-skip:hover{color:var(--accent);background:rgba(0,0,0,0.5);transform:translateY(-1px)}
 .music-skip:focus-visible{outline:2px solid var(--accent-2);outline-offset:4px}
 .player-buttons{
@@ -243,6 +244,24 @@ h1{
   gap:8px;
   padding:0;
   transform:translateY(-2px);
+}
+#musicPrev::before,
+#musicNext::before{
+  content:"";
+  width:18px;
+  height:18px;
+  background:currentColor;
+  -webkit-mask:center/90% no-repeat;
+          mask:center/90% no-repeat;
+  display:block;
+}
+#musicPrev::before{
+  -webkit-mask-image:url("assets/images/backward.end.fill.svg");
+          mask-image:url("assets/images/backward.end.fill.svg");
+}
+#musicNext::before{
+  -webkit-mask-image:url("assets/images/forward.end.fill.svg");
+          mask-image:url("assets/images/forward.end.fill.svg");
 }
 .snow-toggle{
   display:inline-flex;
