@@ -71,6 +71,8 @@ export async function initBgPlayer({
   musicPrev,
   musicNext,
   musicShuffle,
+  trackBar,
+  trackBarFill,
   trackIndicator,
   updateMusicBadge,
   setBgTrack,
@@ -100,19 +102,18 @@ export async function initBgPlayer({
   const renderTrackIndicator = (progressPct = null) => {
     if (!trackIndicator) return;
     const labelEl = trackIndicator.querySelector('.track-label');
-    const fillEl = trackIndicator.querySelector('.track-bar-fill');
     const { total } = getBgTrackPosition();
     if (!total) {
       if (labelEl) labelEl.textContent = '';
-      if (fillEl) fillEl.style.width = '0%';
+      if (trackBarFill) trackBarFill.style.width = '0%';
       trackIndicator.setAttribute('aria-label', 'No background tracks loaded');
       return;
     }
     const displayCurrent = Math.max(1, (bgTrackIndex % total) + 1);
     if (labelEl) labelEl.textContent = `Track ${displayCurrent}`;
-    if (fillEl) {
+    if (trackBarFill) {
       const pct = progressPct == null ? 0 : Math.min(100, Math.max(0, progressPct));
-      fillEl.style.width = `${pct}%`;
+      trackBarFill.style.width = `${pct}%`;
     }
     trackIndicator.setAttribute('aria-label', `Track ${displayCurrent} of ${total}`);
   };
@@ -144,7 +145,6 @@ export async function initBgPlayer({
     musicShuffle.classList.toggle('active', isShuffle);
   };
 
-  const trackBar = trackIndicator ? trackIndicator.querySelector('.track-bar') : null;
   if (trackBar) {
     trackBar.addEventListener('click', (e) => {
       const rect = trackBar.getBoundingClientRect();

@@ -36,25 +36,28 @@
       <img src="assets/images/dancing.gif" alt="" loading="lazy">
     </div>
     <div class="music-controls">
-      <div id="trackIndicator" class="track-indicator" aria-live="polite" role="presentation">
-        <div class="track-header">
-          <span class="track-label-row"><span class="track-note" aria-hidden="true">♪</span><span class="track-label"></span></span>
-          <button id="musicShuffle" class="music-shuffle" aria-pressed="true" aria-label="Toggle shuffle">🔀</button>
+      <div class="player-top-row">
+        <div id="trackIndicator" class="track-indicator" aria-live="polite" role="presentation">
+          <div class="track-header">
+            <button id="musicShuffle" class="music-shuffle" aria-pressed="true" aria-label="Toggle shuffle">🔀</button>
+            <span class="track-label-row"><span class="track-note" aria-hidden="true">♪</span><span class="track-label"></span></span>
+          </div>
         </div>
-        <div class="track-bar" role="presentation"><div class="track-bar-fill"></div></div>
+        <div class="player-buttons" role="group" aria-label="Background track controls">
+          <button id="musicPrev" class="music-skip" aria-label="Previous background track"><span aria-hidden="true">⏮</span></button>
+          <button id="musicToggle" class="music-toggle" aria-pressed="false" aria-label="Toggle background music">
+            <span class="music-playpause" aria-hidden="true">▶</span>
+          </button>
+          <button id="musicNext" class="music-skip" aria-label="Next background track"><span aria-hidden="true">⏭</span></button>
+        </div>
       </div>
-      <div class="player-buttons" role="group" aria-label="Background track controls">
-        <button id="musicPrev" class="music-skip" aria-label="Previous background track"><span aria-hidden="true">⏮</span></button>
-        <button id="musicToggle" class="music-toggle" aria-pressed="false" aria-label="Toggle background music">
-          <span class="music-playpause" aria-hidden="true">▶</span>
-        </button>
-        <button id="musicNext" class="music-skip" aria-label="Next background track"><span aria-hidden="true">⏭</span></button>
+      <div class="track-progress" role="presentation">
+        <div class="track-bar" id="trackBar" role="presentation"><div class="track-bar-fill" id="trackBarFill"></div></div>
       </div>
     </div>
-    <button id="snowToggle" class="music-skip" aria-pressed="false" aria-label="Toggle snowfall"><span aria-hidden="true">❄</span></button>
     <a class="brand-link" href="https://www.instagram.com/milesahead.digitalart" target="_blank" rel="noopener noreferrer">milesahead.digitalart</a>
     <main class="calendar">
-      <h1>Jazz Riddles Advent Calendar*</h1>
+      <h1>Jazz Riddles Advent Calendar <button id="snowToggle" class="snow-toggle" aria-pressed="false" aria-label="Toggle snowfall"><span aria-hidden="true">❄</span></button></h1>
       <p class="subtitle">Open a door, listen to the track, guess the singer — then reveal the voice.</p>
       <div id="grid" class="grid"></div>
     </main>
