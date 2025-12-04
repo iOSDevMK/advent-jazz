@@ -513,7 +513,7 @@ h1{
   align-items:center;
   justify-content:center;
   z-index:1000;
-  padding:60px 16px 16px;
+  padding:90px 16px 16px;
 }
 .lock-dialog{z-index:1100}
 .hidden{display:none}
@@ -622,6 +622,8 @@ h1{
   border:1px solid rgba(212,175,55,0.24);
   box-shadow:0 30px 80px rgba(0,0,0,0.75);
   width:min(92vw,560px);
+  max-height:calc(100vh - 120px);
+  overflow:auto;
 }
 /* Quiz styles */
 .quiz-lead{ margin:14px 0 16px; text-align:center; font-weight:700; font-size:1.05rem; color:#d4af37; }
@@ -634,7 +636,17 @@ h1{
 /* Quiz overlay dialog */
 .quiz-overlay{ position:absolute; inset:0; background:rgba(0,0,0,0.55); backdrop-filter:saturate(120%) blur(2px); display:grid; place-items:center; z-index:5; }
 .quiz-overlay.hidden{ display:none; }
-.quiz-panel{ width:min(92vw,520px); background:linear-gradient(180deg,#181818,#141414); border:1px solid rgba(255,255,255,0.08); border-radius:16px; box-shadow:0 24px 60px rgba(0,0,0,0.7); padding:22px 24px; position:relative; }
+.quiz-panel{
+  width:min(92vw,520px);
+  max-height:min(86vh, 640px);
+  overflow:auto;
+  background:linear-gradient(180deg,#181818,#141414);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px;
+  box-shadow:0 24px 60px rgba(0,0,0,0.7);
+  padding:22px 24px;
+  position:relative;
+}
 .quiz-title{ margin:0 2px 14px 2px; font-size:1.3rem; text-align:center; letter-spacing:0.3px; color:#f5f5f5; }
 .quiz-close{ position:absolute; right:12px; top:10px; background:transparent; color:#e5e5e5; border:none; font-size:22px; line-height:1; cursor:pointer; transition:color 120ms ease; }
 .quiz-close:hover{ color:#d4af37; }
@@ -664,9 +676,11 @@ h1{
 }
 .close:hover{background:#181818}
 .zoom-frame{
-  width:min(86vw,420px);
+  width:clamp(180px, 68vw, 340px);
   aspect-ratio:3/4;
-  min-height:360px;
+  min-height:200px;
+  max-height:calc(100vh - 240px);
+  height:auto;
   background:rgba(15,15,15,0.98);
   border-radius:12px;
   overflow:hidden;
@@ -1020,12 +1034,19 @@ h1{
 }
 
 @media (max-width:800px){
-  .zoom-frame{width:340px;min-height:360px}
+  .zoom-frame{
+    width:clamp(170px, 70vw, 300px);
+    max-height:calc(100vh - 220px);
+  }
 }
 @media (max-width:480px){
   .music-controls{ top:53px; right:14px; padding:6px 9px; }
   .modal, .lock-dialog{ padding-top:84px; }
-  .zoom-frame{width:280px;min-height:320px}
+  .modal-content{max-height:calc(100vh - 130px);}
+  .zoom-frame{
+    width:clamp(160px, 78vw, 260px);
+    max-height:calc(100vh - 200px);
+  }
   .modal-content{padding:32px 16px 18px}
   .close{right:10px;top:10px}
   .countdown-text{ padding:8px 16px; font-size:13px; min-width:104px; text-align:center; }
@@ -1033,6 +1054,13 @@ h1{
 @media (max-width:380px){
   .music-controls{ top:58px; }
   .modal, .lock-dialog{ padding-top:108px; }
+}
+@media (max-width:600px){
+  .quiz-panel{ max-height:88vh; padding:18px; }
+  .quiz-options{ grid-template-columns:1fr; gap:10px; }
+}
+@media (max-height:700px){
+  .quiz-panel{ max-height:82vh; }
 }
 
 /* Prevent title overlap with fixed player controls on narrower viewports */
